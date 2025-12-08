@@ -17,8 +17,6 @@ interface ApiService {
     ): Single<List<Any>>
 
 
-
-    // Создайте новый файл или добавьте в ApiService.kt
     data class ApiResponse(
         val success: String
     )
