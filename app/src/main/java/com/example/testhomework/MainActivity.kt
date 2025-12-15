@@ -16,6 +16,7 @@ import com.example.testhomework.task1.NavigationListener
 import com.example.testhomework.task1.Screen1Fragment
 import com.example.testhomework.task1.Screen2Fragment
 import com.example.testhomework.task1.Screen3Fragment
+import com.example.testhomework.task3.ProgressRectangleFragment
 import com.example.testhomework.task2.ChargingNotificationWorker
 
 class MainActivity : AppCompatActivity(), NavigationListener {
@@ -60,6 +61,7 @@ class MainActivity : AppCompatActivity(), NavigationListener {
             is Screen1Fragment -> currentFragment.setNavigationListener(this)
             is Screen2Fragment -> currentFragment.setNavigationListener(this)
             is Screen3Fragment -> currentFragment.setNavigationListener(this)
+            is ProgressRectangleFragment -> currentFragment.setNavigationListener(this)
         }
     }
 

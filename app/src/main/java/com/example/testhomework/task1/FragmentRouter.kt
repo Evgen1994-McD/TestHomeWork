@@ -1,12 +1,13 @@
 package com.example.testhomework.task1
 
 import androidx.fragment.app.FragmentManager
+import com.example.testhomework.task3.ProgressRectangleFragment
 
 class FragmentRouter(
     private val fragmentManager: FragmentManager,
     private val containerId: Int
 ) {
-    private val totalScreens = 3
+    private val totalScreens = 4
     private var currentScreen = 1
 
     fun navigateToNext() {
@@ -30,6 +31,7 @@ class FragmentRouter(
                 1 -> Screen1Fragment()
                 2 -> Screen2Fragment()
                 3 -> Screen3Fragment()
+                4 -> ProgressRectangleFragment()
                 else -> return
             }
 

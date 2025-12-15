@@ -24,9 +24,6 @@ class Screen3Fragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         
-        // Третий экран - скрываем кнопку "Следующий"
-        binding.btnNext.visibility = View.GONE
-        
         binding.btnNext.setOnClickListener {
             navigationListener?.onNextClicked()
         }
