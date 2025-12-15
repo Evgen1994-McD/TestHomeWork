@@ -22,7 +22,7 @@ fun PhotosPageDto.toDomain(): PhotosPage {
         page = page,
         pages = pages,
         perPage = perpage,
-        total = total
+        total = total.toIntOrNull() ?: 0
     )
 }
 
