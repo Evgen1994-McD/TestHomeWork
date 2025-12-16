@@ -65,22 +65,30 @@ class GalleryFragment : Fragment() {
     }
 
     private fun setupObservers() {
-        viewModel.photos.observe(viewLifecycleOwner, Observer { photos ->
-            photosAdapter.submitList(photos)
-            binding.recyclerView.visibility =
-                if (photos.isNotEmpty()) View.VISIBLE else View.GONE
-        })
-
-        viewModel.isLoading.observe(viewLifecycleOwner, Observer { isLoading ->
-            binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
-        })
-
-        viewModel.errorMessage.observe(viewLifecycleOwner, Observer { error ->
-            if (error.isNullOrEmpty()) {
-                binding.errorGroup.visibility = View.GONE
-            } else {
-                binding.errorText.text = error
-                binding.errorGroup.visibility = View.VISIBLE
+        viewModel.uiState.observe(viewLifecycleOwner, Observer { state ->
+            when (state) {
+                is GalleryUiState.Loading -> {
+                    binding.progressBar.visibility = View.VISIBLE
+                    binding.progressBarBottom.visibility = View.GONE
+                    binding.errorGroup.visibility = View.GONE
+                    binding.recyclerView.visibility = View.GONE
+                }
+                is GalleryUiState.Success -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.progressBarBottom.visibility = 
+                        if (state.isLoadingMore) View.VISIBLE else View.GONE
+                    binding.errorGroup.visibility = View.GONE
+                    binding.recyclerView.visibility = View.VISIBLE
+                    photosAdapter.submitList(state.photos)
+                }
+                is GalleryUiState.Error -> {
+                    binding.progressBar.visibility = View.GONE
+                    binding.progressBarBottom.visibility = View.GONE
+                    binding.errorText.text = state.message
+                    binding.errorGroup.visibility = View.VISIBLE
+                    binding.recyclerView.visibility = View.INVISIBLE
+                    photosAdapter.submitList(state.photos)
+                }
             }
         })
     }

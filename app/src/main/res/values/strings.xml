@@ -1,6 +1,9 @@
 <resources>
     <string name="app_name">TestHomeWork</string>
     <string name="error_generic">Ошибка загрузки. Попробуйте ещё раз.</string>
+    <string name="error_no_internet">Нет подключения к интернету. Проверьте соединение и попробуйте снова.</string>
+    <string name="error_network">Ошибка сети. Проверьте подключение к интернету.</string>
+    <string name="error_server">Ошибка сервера. Попробуйте позже.</string>
     <string name="retry">Повторить</string>
     <string name="photo">Фото</string>
 </resources>
