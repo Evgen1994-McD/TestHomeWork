@@ -20,9 +20,11 @@ abstract class UseCase<in P, R>(
     suspend operator fun invoke(params: P): Result<R> {
         return try {
             withContext(dispatcher) {
-                Result.success(execute(params))
+                val result = execute(params)
+                Result.success(result)
             }
         } catch (e: Exception) {
+            android.util.Log.e("UseCase", "Error in UseCase: ${e.message}", e)
             Result.failure(e)
         }
     }

@@ -1,8 +1,10 @@
 package com.example.testhomework.data.remote.dto
 
 data class FlickrSearchResponse(
-    val photos: PhotosPageDto,
-    val stat: String
+    val photos: PhotosPageDto?,
+    val stat: String,
+    val code: Int? = null,
+    val message: String? = null
 )
 
 data class PhotosPageDto(
