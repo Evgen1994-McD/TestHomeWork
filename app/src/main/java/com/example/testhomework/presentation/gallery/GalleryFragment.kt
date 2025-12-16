@@ -22,6 +22,7 @@ class GalleryFragment : Fragment() {
     private val viewModel: GalleryViewModel by viewModels()
 
     private lateinit var photosAdapter: PhotosAdapter
+    private var savedScrollPosition: Int = 0
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,12 +35,33 @@ class GalleryFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        
+        // Восстанавливаем позицию прокрутки
+        savedScrollPosition = savedInstanceState?.getInt("scroll_position", 0) ?: 0
+        
         setupRecyclerView()
         setupObservers()
         setupRetry()
 
+        // Загружаем данные только при первом создании и если их еще нет
         if (savedInstanceState == null) {
-            viewModel.loadFirstPage()
+            val currentState = viewModel.uiState.value
+            val hasData = currentState is GalleryUiState.Success && currentState.photos.isNotEmpty()
+            if (!hasData) {
+                viewModel.loadFirstPage()
+            }
+        }
+    }
+    
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        // Сохраняем позицию прокрутки
+        val layoutManager = binding.recyclerView.layoutManager as? GridLayoutManager
+        layoutManager?.let {
+            val firstVisiblePosition = it.findFirstVisibleItemPosition()
+            if (firstVisiblePosition != RecyclerView.NO_POSITION) {
+                outState.putInt("scroll_position", firstVisiblePosition)
+            }
         }
     }
 
@@ -50,6 +72,12 @@ class GalleryFragment : Fragment() {
         binding.recyclerView.apply {
             adapter = photosAdapter
             this.layoutManager = layoutManager
+            
+            // Восстанавливаем позицию прокрутки при возврате
+            if (savedScrollPosition > 0) {
+                post { layoutManager.scrollToPositionWithOffset(savedScrollPosition, 0) }
+            }
+            
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     super.onScrolled(recyclerView, dx, dy)

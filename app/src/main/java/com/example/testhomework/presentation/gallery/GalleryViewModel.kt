@@ -23,6 +23,13 @@ class GalleryViewModel(application: Application) : AndroidViewModel(application)
 
     fun loadFirstPage() {
         if (isLoadingPage) return
+        
+        // Если уже есть загруженные данные, не перезагружаем
+        val currentState = _uiState.value
+        if (currentState is GalleryUiState.Success && currentState.photos.isNotEmpty()) {
+            return
+        }
+        
         currentPage = 1
         isLastPage = false
         _uiState.value = GalleryUiState.Loading()
