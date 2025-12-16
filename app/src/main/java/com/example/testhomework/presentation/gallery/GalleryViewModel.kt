@@ -5,13 +5,14 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
-import com.example.testhomework.data.repository.PhotosRepositoryImpl
+import com.example.testhomework.domain.usecase.GetPhotosUseCase
 import com.example.testhomework.util.ErrorHandler
 import kotlinx.coroutines.launch
 
-class GalleryViewModel(application: Application) : AndroidViewModel(application) {
-
-    private val repository = PhotosRepositoryImpl()
+class GalleryViewModel(
+    application: Application,
+    private val getPhotosUseCase: GetPhotosUseCase
+) : AndroidViewModel(application) {
 
     private val _uiState = MutableLiveData<GalleryUiState>(GalleryUiState.Loading())
     val uiState: LiveData<GalleryUiState> = _uiState
@@ -49,7 +50,13 @@ class GalleryViewModel(application: Application) : AndroidViewModel(application)
         viewModelScope.launch {
             isLoadingPage = true
 
-            val result = repository.searchPhotos(page, pageSize)
+            val result = getPhotosUseCase(
+                GetPhotosUseCase.Params(
+                    page = page,
+                    pageSize = pageSize
+                )
+            )
+            
             result
                 .onSuccess { photosPage ->
                     currentPage = photosPage.page

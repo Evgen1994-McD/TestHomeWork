@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
@@ -13,13 +12,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.testhomework.R
 import com.example.testhomework.databinding.FragmentGalleryBinding
 import com.example.testhomework.domain.model.Photo
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class GalleryFragment : Fragment() {
 
     private var _binding: FragmentGalleryBinding? = null
     private val binding get() = _binding!!
 
-    private val viewModel: GalleryViewModel by viewModels()
+    private val viewModel: GalleryViewModel by viewModel()
 
     private lateinit var photosAdapter: PhotosAdapter
     private var savedScrollPosition: Int = 0
