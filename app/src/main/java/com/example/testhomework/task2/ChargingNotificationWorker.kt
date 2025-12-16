@@ -35,8 +35,7 @@ class ChargingNotificationWorker(
         val status: Int = batteryStatus?.getIntExtra(BatteryManager.EXTRA_STATUS, -1) ?: -1
         val isCharging = status == BatteryManager.BATTERY_STATUS_CHARGING ||
                 status == BatteryManager.BATTERY_STATUS_FULL
-        
-        // Также проверяем через plugged status
+
         val chargePlug: Int = batteryStatus?.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) ?: -1
         val usbCharge = chargePlug == BatteryManager.BATTERY_PLUGGED_USB
         val acCharge = chargePlug == BatteryManager.BATTERY_PLUGGED_AC
