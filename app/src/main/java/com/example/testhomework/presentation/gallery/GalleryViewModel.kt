@@ -76,9 +76,12 @@ class GalleryViewModel(application: Application) : AndroidViewModel(application)
                         else -> emptyList()
                     }
                     val errorMessage = ErrorHandler.getErrorMessage(throwable, getApplication())
+                    // Если это ошибка пагинации (не первая загрузка и есть данные), показываем ошибку внизу
+                    val isPaginationError = !reset && currentPhotos.isNotEmpty()
                     _uiState.value = GalleryUiState.Error(
                         message = errorMessage,
-                        photos = currentPhotos
+                        photos = currentPhotos,
+                        isPaginationError = isPaginationError
                     )
                 }
 

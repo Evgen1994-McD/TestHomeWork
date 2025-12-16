@@ -14,6 +14,7 @@ sealed class GalleryUiState {
 
     data class Error(
         val message: String,
-        val photos: List<Photo> = emptyList()
+        val photos: List<Photo> = emptyList(),
+        val isPaginationError: Boolean = false
     ) : GalleryUiState()
 }

@@ -56,11 +56,13 @@ class GalleryFragment : Fragment() {
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
         // Сохраняем позицию прокрутки
-        val layoutManager = binding.recyclerView.layoutManager as? GridLayoutManager
-        layoutManager?.let {
-            val firstVisiblePosition = it.findFirstVisibleItemPosition()
-            if (firstVisiblePosition != RecyclerView.NO_POSITION) {
-                outState.putInt("scroll_position", firstVisiblePosition)
+        _binding?.recyclerView?.layoutManager?.let { manager ->
+            val layoutManager = manager as? GridLayoutManager
+            layoutManager?.let {
+                val firstVisiblePosition = it.findFirstVisibleItemPosition()
+                if (firstVisiblePosition != RecyclerView.NO_POSITION) {
+                    outState.putInt("scroll_position", firstVisiblePosition)
+                }
             }
         }
     }
@@ -99,6 +101,7 @@ class GalleryFragment : Fragment() {
                     binding.progressBar.visibility = View.VISIBLE
                     binding.progressBarBottom.visibility = View.GONE
                     binding.errorGroup.visibility = View.GONE
+                    binding.paginationErrorGroup.visibility = View.GONE
                     binding.recyclerView.visibility = View.GONE
                 }
                 is GalleryUiState.Success -> {
@@ -106,16 +109,54 @@ class GalleryFragment : Fragment() {
                     binding.progressBarBottom.visibility = 
                         if (state.isLoadingMore) View.VISIBLE else View.GONE
                     binding.errorGroup.visibility = View.GONE
+                    binding.paginationErrorGroup.visibility = View.GONE
                     binding.recyclerView.visibility = View.VISIBLE
+                    // Восстанавливаем стандартный padding при успешной загрузке
+                    binding.recyclerView.setPadding(
+                        binding.recyclerView.paddingLeft,
+                        binding.recyclerView.paddingTop,
+                        binding.recyclerView.paddingRight,
+                        0
+                    )
                     photosAdapter.submitList(state.photos)
                 }
                 is GalleryUiState.Error -> {
                     binding.progressBar.visibility = View.GONE
                     binding.progressBarBottom.visibility = View.GONE
-                    binding.errorText.text = state.message
-                    binding.errorGroup.visibility = View.VISIBLE
-                    binding.recyclerView.visibility = View.INVISIBLE
                     photosAdapter.submitList(state.photos)
+                    
+                    if (state.isPaginationError) {
+                        // Ошибка пагинации - показываем список и ошибку внизу
+                        binding.recyclerView.visibility = View.VISIBLE
+                        binding.errorGroup.visibility = View.GONE
+                        binding.paginationErrorText.text = state.message
+                        binding.paginationErrorGroup.visibility = View.VISIBLE
+                        // Добавляем padding снизу, чтобы контент не перекрывался ошибкой
+                        binding.paginationErrorGroup.post {
+                            val errorHeight = binding.paginationErrorGroup.height
+                            if (errorHeight > 0) {
+                                binding.recyclerView.setPadding(
+                                    binding.recyclerView.paddingLeft,
+                                    binding.recyclerView.paddingTop,
+                                    binding.recyclerView.paddingRight,
+                                    errorHeight
+                                )
+                            }
+                        }
+                    } else {
+                        // Ошибка первой загрузки - показываем только ошибку
+                        binding.recyclerView.visibility = View.INVISIBLE
+                        binding.errorText.text = state.message
+                        binding.errorGroup.visibility = View.VISIBLE
+                        binding.paginationErrorGroup.visibility = View.GONE
+                        // Восстанавливаем стандартный padding
+                        binding.recyclerView.setPadding(
+                            binding.recyclerView.paddingLeft,
+                            binding.recyclerView.paddingTop,
+                            binding.recyclerView.paddingRight,
+                            0
+                        )
+                    }
                 }
             }
         })
@@ -124,6 +165,9 @@ class GalleryFragment : Fragment() {
     private fun setupRetry() {
         binding.retryButton.setOnClickListener {
             viewModel.loadFirstPage()
+        }
+        binding.paginationRetryButton.setOnClickListener {
+            viewModel.loadNextPage()
         }
     }
 
