@@ -24,11 +24,9 @@ class ProgressRectangleFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        
-        // Последний экран - скрываем кнопку "Следующий"
+
         binding.btnNext.visibility = View.GONE
-        
-        // Настраиваем кастомную View
+
         binding.progressRectangleView.onProgressChanged = { progress ->
             val percent = (progress * 100).toInt()
             binding.tvProgress.text = "$percent%"

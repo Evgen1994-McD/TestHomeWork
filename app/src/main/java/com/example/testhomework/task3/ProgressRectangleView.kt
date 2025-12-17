@@ -5,7 +5,6 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.RectF
 import android.util.AttributeSet
-import android.view.MotionEvent
 import android.view.View
 import kotlin.random.Random
 
@@ -19,7 +18,7 @@ class ProgressRectangleView @JvmOverloads constructor(
     private var fillColor: Int = generateRandomColor()
 
     private val backgroundPaint = Paint().apply {
-        color = 0xFFCCCCCC.toInt() // Серый цвет для фона
+        color = 0xFFCCCCCC.toInt()
         style = Paint.Style.FILL
     }
 
@@ -29,19 +28,32 @@ class ProgressRectangleView @JvmOverloads constructor(
     }
 
     private val strokePaint = Paint().apply {
-        color = 0xFF000000.toInt() // Черная обводка
+        color = 0xFF000000.toInt()
         style = Paint.Style.STROKE
         strokeWidth = 4f
     }
 
     private val rect = RectF()
-
+    private val fillRect = RectF()
+    private val padding = strokePaint.strokeWidth / 2
+    private var fillWidth =0f
     var onProgressChanged: ((Float) -> Unit)? = null
+
+    init {
+        setOnClickListener {
+            progress += 0.1f
+            if (progress >= 1.0f) {
+                progress = 0f
+            }
+            fillColor = generateRandomColor()
+            invalidate()
+            onProgressChanged?.invoke(progress)
+        }
+    }
 
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
 
-        val padding = strokePaint.strokeWidth / 2
         rect.set(
             padding,
             padding,
@@ -50,10 +62,9 @@ class ProgressRectangleView @JvmOverloads constructor(
         )
         canvas.drawRect(rect, backgroundPaint)
 
-        // Рисуем заполненную часть
         if (progress > 0f) {
-            val fillWidth = rect.width() * progress
-            val fillRect = RectF(
+             fillWidth = rect.width() * progress
+            fillRect.set(
                 rect.left,
                 rect.top,
                 rect.left + fillWidth,
@@ -62,28 +73,8 @@ class ProgressRectangleView @JvmOverloads constructor(
             fillPaint.color = fillColor
             canvas.drawRect(fillRect, fillPaint)
         }
-        // Рисуем обводку
+
         canvas.drawRect(rect, strokePaint)
-    }
-
-    override fun onTouchEvent(event: MotionEvent): Boolean {
-        if (event.action == MotionEvent.ACTION_DOWN) {
-            // Увеличиваем прогресс на 10%
-            progress += 0.1f
-
-            // Если достигли 100% или больше, сбрасываем на 0
-            if (progress >= 1.0f) {
-                progress = 0f
-            }
-
-            // Меняем цвет при каждом нажатии (включая сброс)
-            fillColor = generateRandomColor()
-
-            invalidate()
-            onProgressChanged?.invoke(progress)
-            return true
-        }
-        return super.onTouchEvent(event)
     }
 
     private fun generateRandomColor(): Int {
@@ -92,13 +83,5 @@ class ProgressRectangleView @JvmOverloads constructor(
             Random.nextInt(256),
             Random.nextInt(256)
         )
-    }
-
-    fun getProgress(): Float = progress
-
-    fun reset() {
-        progress = 0f
-        fillColor = generateRandomColor()
-        invalidate()
     }
 }

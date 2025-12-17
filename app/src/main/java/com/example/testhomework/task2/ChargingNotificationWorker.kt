@@ -6,8 +6,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.BatteryManager
-import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
+import android.Manifest
+import android.content.pm.PackageManager
+import androidx.core.content.ContextCompat
 import androidx.work.Worker
 import androidx.work.WorkerParameters
 
@@ -19,10 +22,9 @@ class ChargingNotificationWorker(
     override fun doWork(): Result {
         // Проверяем статус зарядки
         val isCharging = isDeviceCharging()
-        
+
         if (isCharging) {
             sendNotification()
-            return Result.success()
         }
         
         return Result.success()
@@ -39,32 +41,34 @@ class ChargingNotificationWorker(
         val chargePlug: Int = batteryStatus?.getIntExtra(BatteryManager.EXTRA_PLUGGED, -1) ?: -1
         val usbCharge = chargePlug == BatteryManager.BATTERY_PLUGGED_USB
         val acCharge = chargePlug == BatteryManager.BATTERY_PLUGGED_AC
-        val wirelessCharge = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
-            chargePlug == BatteryManager.BATTERY_PLUGGED_WIRELESS
-        } else {
-            false
-        }
+        val wirelessCharge = chargePlug == BatteryManager.BATTERY_PLUGGED_WIRELESS
         
         return isCharging || usbCharge || acCharge || wirelessCharge
     }
 
     private fun sendNotification() {
+        // Проверяем разрешение на уведомления
+        if (ContextCompat.checkSelfPermission(
+                applicationContext,
+                Manifest.permission.POST_NOTIFICATIONS
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            return
+        }
+        
         val notificationManager = applicationContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         
         val channelId = CHANNEL_ID
         val notificationId = NOTIFICATION_ID
 
-        // Создаем канал уведомлений для Android 8.0+
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                channelId,
-                CHANNEL_NAME,
-                NotificationManager.IMPORTANCE_DEFAULT
-            ).apply {
-                description = CHANNEL_DESCRIPTION
-            }
-            notificationManager.createNotificationChannel(channel)
+        val channel = NotificationChannel(
+            channelId,
+            CHANNEL_NAME,
+            NotificationManager.IMPORTANCE_DEFAULT
+        ).apply {
+            description = CHANNEL_DESCRIPTION
         }
+        notificationManager.createNotificationChannel(channel)
 
         val notification = NotificationCompat.Builder(applicationContext, channelId)
             .setSmallIcon(android.R.drawable.ic_dialog_info)

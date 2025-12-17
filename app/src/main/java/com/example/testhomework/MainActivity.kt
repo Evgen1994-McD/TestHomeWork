@@ -1,13 +1,19 @@
 package com.example.testhomework
 
+import android.Manifest
 import android.app.NotificationChannel
 import android.app.NotificationManager
-import android.os.Build
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.work.Constraints
+import androidx.work.ExistingWorkPolicy
 import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import com.example.testhomework.databinding.ActivityMainBinding
@@ -16,12 +22,22 @@ import com.example.testhomework.task1.NavigationListener
 import com.example.testhomework.task1.Screen1Fragment
 import com.example.testhomework.task1.Screen2Fragment
 import com.example.testhomework.task1.Screen3Fragment
-import com.example.testhomework.task3.ProgressRectangleFragment
 import com.example.testhomework.task2.ChargingNotificationWorker
+import com.example.testhomework.task3.ProgressRectangleFragment
 
 class MainActivity : AppCompatActivity(), NavigationListener {
     private lateinit var binding: ActivityMainBinding
     private lateinit var router: FragmentRouter
+    
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()
+    ) { isGranted: Boolean ->
+        if (isGranted) {
+            Log.d("MainActivity", "Увед 0к")
+        } else {
+            Log.w("MainActivity", "Увед не ок")
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,13 +56,12 @@ class MainActivity : AppCompatActivity(), NavigationListener {
             router.navigateToScreen(1)
         }
 
-        // Устанавливаем NavigationListener для текущего фрагмента после транзакции
         binding.fragmentContainer.post {
             updateFragmentNavigationListener()
         }
 
-        // Создаем канал уведомлений и планируем WorkManager задачу
         createNotificationChannel()
+        requestNotificationPermission()
         scheduleChargingNotificationWork()
     }
 
@@ -67,37 +82,52 @@ class MainActivity : AppCompatActivity(), NavigationListener {
 
     override fun onNextClicked() {
         router.navigateToNext()
-        // Обновляем listener после транзакции
         supportFragmentManager.executePendingTransactions()
         updateFragmentNavigationListener()
     }
 
     override fun onPreviousClicked() {
         router.navigateToPrevious()
-        // Обновляем listener после транзакции
         supportFragmentManager.executePendingTransactions()
         updateFragmentNavigationListener()
     }
 
     private fun createNotificationChannel() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val channel = NotificationChannel(
-                CHANNEL_ID,
-                "Уведомления о зарядке",
-                NotificationManager.IMPORTANCE_DEFAULT
-            ).apply {
-                description = "Уведомления о статусе зарядки устройства"
-            }
-            val notificationManager = getSystemService(NotificationManager::class.java)
-            notificationManager.createNotificationChannel(channel)
+        val channel = NotificationChannel(
+            CHANNEL_ID,
+            "Уведомления о зарядке",
+            NotificationManager.IMPORTANCE_DEFAULT
+        ).apply {
+            description = "Уведомления о статусе зарядки устройства"
         }
+        val notificationManager = getSystemService(NotificationManager::class.java)
+        notificationManager.createNotificationChannel(channel)
     }
 
+    private fun requestNotificationPermission() {
+            if (ContextCompat.checkSelfPermission(
+                    this,
+                    Manifest.permission.POST_NOTIFICATIONS
+                ) != PackageManager.PERMISSION_GRANTED
+            ) {
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+
+    }
+    
     private fun scheduleChargingNotificationWork() {
+        val constraints = Constraints.Builder()
+            .setRequiresCharging(true)
+            .build()
         val workRequest = OneTimeWorkRequestBuilder<ChargingNotificationWorker>()
+            .setConstraints(constraints)
             .build()
 
-        WorkManager.getInstance(this).enqueue(workRequest)
+        WorkManager.getInstance(this).enqueueUniqueWork(
+            "charging_notification_work",
+            ExistingWorkPolicy.KEEP,
+            workRequest
+        )
     }
 
     companion object {
