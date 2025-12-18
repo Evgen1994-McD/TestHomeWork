@@ -25,7 +25,9 @@ data class PhotoDto(
     val ispublic: Int,
     val isfriend: Int,
     val isfamily: Int,
-    val url_q: String? = null, // квадратная миниатюра
+    val url_sq: String? = null, // квадратная миниатюра 75x75
+    val url_t: String? = null, // миниатюра 100px
+    val url_q: String? = null, // квадратная миниатюра 150x150
     val url_z: String? = null, // среднее разрешение
     val url_l: String? = null  // крупное разрешение
 )

@@ -1,5 +1,6 @@
 package com.example.testhomework.presentation.gallery
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyGridState
@@ -12,11 +13,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import coil.size.Size
 import com.example.testhomework.R
 import com.example.testhomework.domain.model.Photo
 import org.koin.androidx.compose.koinViewModel
@@ -150,7 +154,11 @@ private fun PhotoItem(
         shape = MaterialTheme.shapes.medium
     ) {
         AsyncImage(
-            model = photo.thumbnailUrl,
+            model = ImageRequest.Builder(LocalContext.current)
+                .data(photo.thumbnailUrl)
+                .size(Size(150, 150))
+                .crossfade(true)
+                .build(),
             contentDescription = photo.title,
             contentScale = ContentScale.Crop,
             modifier = Modifier.fillMaxSize()

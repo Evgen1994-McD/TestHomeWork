@@ -13,12 +13,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
+import coil.request.ImageRequest
+import coil.size.Size
 import com.example.testhomework.R
 import kotlinx.coroutines.delay
 import org.koin.androidx.compose.koinViewModel
@@ -44,6 +48,12 @@ fun PhotoDetailsScreen(
     }
 
     val uiState by viewModel.uiState.observeAsState()
+    
+    // Получаем размер экрана для ограничения размера изображения
+    val configuration = LocalConfiguration.current
+    val screenWidth = configuration.screenWidthDp
+    val screenHeight = configuration.screenHeightDp
+    val context = LocalContext.current
 
     // Загружаем фото при первом запуске
     LaunchedEffect(photoUrl, photoTitle) {
@@ -101,7 +111,11 @@ fun PhotoDetailsScreen(
                         )
                         // Показываем изображение сразу, даже в состоянии Loading
                         AsyncImage(
-                            model = state.photoUrl,
+                            model = ImageRequest.Builder(context)
+                                .data(state.photoUrl)
+                                .size(Size(screenWidth, screenHeight))
+                                .crossfade(true)
+                                .build(),
                             contentDescription = state.photoTitle,
                             contentScale = ContentScale.Fit,
                             onSuccess = { 
@@ -126,21 +140,27 @@ fun PhotoDetailsScreen(
                     }
                 }
                 is PhotoDetailsUiState.Success -> {
-                    AsyncImage(
-                        model = state.photoUrl,
-                        contentDescription = state.photoTitle,
-                        contentScale = ContentScale.Fit,
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .graphicsLayer(
-                                scaleX = scale,
-                                scaleY = scale,
-                                rotationZ = rotation,
-                                translationX = offsetX,
-                                translationY = offsetY
-                            )
-                            .transformable(state = transformableState)
-                    )
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        AsyncImage(
+                            model = ImageRequest.Builder(context)
+                                .data(state.photoUrl)
+                                .size(Size(screenWidth, screenHeight))
+                                .crossfade(true)
+                                .build(),
+                            contentDescription = state.photoTitle,
+                            contentScale = ContentScale.Fit,
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .graphicsLayer(
+                                    scaleX = scale,
+                                    scaleY = scale,
+                                    rotationZ = rotation,
+                                    translationX = offsetX,
+                                    translationY = offsetY
+                                )
+                                .transformable(state = transformableState)
+                        )
+                    }
                 }
                 is PhotoDetailsUiState.Error -> {
                     ErrorContent(
@@ -149,6 +169,12 @@ fun PhotoDetailsScreen(
                             viewModel.loadPhoto(state.photoUrl, state.photoTitle)
                         },
                         modifier = Modifier.fillMaxSize()
+                    )
+                }
+                else -> {
+                    // This should never happen for a sealed class, but added for exhaustiveness
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center)
                     )
                 }
             }
