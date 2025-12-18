@@ -6,7 +6,7 @@ import com.example.testhomework.domain.model.PhotosPage
 import com.example.testhomework.data.remote.dto.PhotosPageDto
 
 fun PhotoDto.toDomain(): Photo {
-    val thumb = url_q ?: url_z ?: url_l ?: ""
+    val thumb = url_sq ?: url_t ?: url_q ?: url_z ?: url_l ?: ""
     val full = url_l ?: url_z ?: url_q ?: ""
     return Photo(
         id = id,
