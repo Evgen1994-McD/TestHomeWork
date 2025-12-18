@@ -19,7 +19,7 @@ class GalleryViewModel(
 
     private var currentPage = 1
     private var isLastPage = false
-    private val pageSize = 8
+    private val pageSize = 4
     private var isLoadingPage = false
 
     fun loadFirstPage() {

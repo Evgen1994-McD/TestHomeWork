@@ -47,7 +47,7 @@ fun GalleryScreen(
         snapshotFlow { gridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
             .collect { lastVisibleIndex ->
                 val totalItems = gridState.layoutInfo.totalItemsCount
-                if (lastVisibleIndex != null && lastVisibleIndex >= totalItems - 5) {
+                if (lastVisibleIndex != null && lastVisibleIndex >= totalItems - 3) {
                     viewModel.loadNextPage()
                 }
             }
@@ -156,8 +156,7 @@ private fun PhotoItem(
         AsyncImage(
             model = ImageRequest.Builder(LocalContext.current)
                 .data(photo.thumbnailUrl)
-                .size(Size(150, 150))
-                .crossfade(true)
+                .size(Size(100, 100))
                 .build(),
             contentDescription = photo.title,
             contentScale = ContentScale.Crop,
