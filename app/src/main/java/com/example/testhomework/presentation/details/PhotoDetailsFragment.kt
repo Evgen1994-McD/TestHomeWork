@@ -97,6 +97,11 @@ class PhotoDetailsFragment : Fragment() {
         }
         handler.postDelayed(timeoutRunnable!!, 5000)
 
+        // Получаем размер экрана для ограничения размера загружаемого изображения
+        val displayMetrics = resources.displayMetrics
+        val screenWidth = displayMetrics.widthPixels
+        val screenHeight = displayMetrics.heightPixels
+
         val target = object : CustomTarget<Drawable>() {
             override fun onResourceReady(
                 resource: Drawable,
@@ -117,6 +122,7 @@ class PhotoDetailsFragment : Fragment() {
 
         Glide.with(binding.photoView)
             .load(url)
+            .override(screenWidth, screenHeight)
             .fitCenter()
             .error(android.R.drawable.ic_dialog_alert)
             .into(target)

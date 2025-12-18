@@ -31,6 +31,7 @@ class PhotosAdapter(
         fun bind(photo: Photo) {
             Glide.with(binding.imageView)
                 .load(photo.thumbnailUrl)
+                .override(400, 400)
                 .centerCrop()
                 .into(binding.imageView)
 
