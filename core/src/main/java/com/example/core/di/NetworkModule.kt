@@ -25,7 +25,6 @@ val networkModule = module {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ITunesApi::class.java)
-
     }
 
     single<Api2>(named(SECOND_QUALIFIER.value)) {
@@ -34,21 +33,16 @@ val networkModule = module {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(Api2::class.java)
-
     }
 
     single<Application> { androidContext() as Application }
 
+    // Регистрация NetworkClient с qualifier'ами
     single<NetworkClient>(named(TRACK_QUALIFIER.value)) {
-        RetrofitNetworkClient(get())
+        RetrofitNetworkClient(get(named(TRACK_QUALIFIER.value)))
     }
-
 
     single<NetworkClient>(named(SECOND_QUALIFIER.value)) {
-        RetrofitNetworkClient2(get())
+        RetrofitNetworkClient2(get(named(SECOND_QUALIFIER.value)))
     }
-
-
-
-
 }

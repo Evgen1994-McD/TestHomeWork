@@ -13,8 +13,12 @@ fun HomeScreen(
     viewModel: HomeViewModel,
     modifier: Modifier = Modifier
 ) {
-    var textField1 by remember { mutableStateOf("") }
-    var textField2 by remember { mutableStateOf("") }
+    var textField1 by remember { mutableStateOf("test") }
+
+
+    val trackState = viewModel.trackState.collectAsState()
+    val secondState = viewModel.someBodyState.collectAsState()
+
 
     Column(
         modifier = modifier
@@ -24,7 +28,10 @@ fun HomeScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         OutlinedTextField(
-            value = textField1,
+            value = when{
+                trackState.value.toString().isEmpty() ->"Что то не так"
+                else -> {trackState.value.toString()}
+            },
             onValueChange = { textField1 = it },
             label = { Text("Первое поле") },
             modifier = Modifier.fillMaxWidth(),
@@ -32,8 +39,11 @@ fun HomeScreen(
         )
 
         OutlinedTextField(
-            value = textField2,
-            onValueChange = { textField2 = it },
+            value = when{
+                secondState.value.toString().isEmpty() ->"Что то не так"
+                else -> {secondState.value.toString()}
+            },
+            onValueChange = { textField1 = it },
             label = { Text("Второе поле") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
@@ -43,6 +53,7 @@ fun HomeScreen(
             onClick = {
                 // Здесь можно вызвать метод из ViewModel
                 viewModel.getTracks(textField1)
+                viewModel.getSomeBody(textField1)
             },
             modifier = Modifier.fillMaxWidth()
         ) {
