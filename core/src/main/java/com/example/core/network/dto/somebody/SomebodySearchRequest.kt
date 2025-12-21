@@ -1,3 +1,3 @@
-package com.example.core.network.dto
+package com.example.core.network.dto.somebody
 
-data class TrackSearchRequest(val expression: String)
+data class SomebodySearchRequest(val expression: String)

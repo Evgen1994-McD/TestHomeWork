@@ -1,11 +1,11 @@
-package com.feature.home
+package com.example
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.feature.home.databinding.ActivityMainBinding
+import com.example.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity(){
     private lateinit var binding: ActivityMainBinding

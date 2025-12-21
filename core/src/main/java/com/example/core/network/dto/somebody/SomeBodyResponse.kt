@@ -1,6 +1,8 @@
-package com.example.core.network.dto
+package com.example.core.network.dto.somebody
 
-class TrackResponse(
+import com.example.core.network.dto.Response
+
+class SomeBodyResponse(
     val resultCount: Int,
-    val results: List<TrackDto>
+    val results: List<SomeBodyDto>
 ) : Response()

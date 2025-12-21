@@ -1,10 +1,11 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.compose.compiler)
 }
 
 android {
-    namespace = "com.feature.home"
+    namespace = "com.example"
     compileSdk = 36
 
     defaultConfig {
@@ -35,10 +36,23 @@ android {
     }
     buildFeatures {
         viewBinding = true
+        compose = true
     }
 }
 
 dependencies {
+    implementation(project(":core"))
+    implementation(project(":feature-home"))
+
+    // Compose BOM
+    implementation(platform(libs.compose.bom))
+    implementation(libs.androidx.compose.ui)
+    implementation(libs.androidx.compose.ui.graphics)
+    implementation(libs.androidx.compose.ui.tooling.preview)
+    implementation(libs.androidx.compose.material3)
+    implementation(libs.androidx.compose.activity)
+    debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.test.manifest)
 
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
@@ -53,26 +67,26 @@ dependencies {
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
     
     // WorkManager
     implementation("androidx.work:work-runtime-ktx:2.9.0")
 
+    // RxJava
+    implementation(libs.rxjava3)
+    implementation(libs.rxandroid)
 
+    // Retrofit с поддержкой RxJava
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.converter.gson)
+    implementation(libs.retrofit.adapter.rxjava3)
 
-    // build.gradle (app)
-    dependencies {
-        // RxJava
-        implementation ("io.reactivex.rxjava3:rxjava:3.1.8")
-        implementation ("io.reactivex.rxjava3:rxandroid:3.0.2")
+    // OkHttp для логирования запросов
+    implementation(libs.okhttp.logging.interceptor)
 
-        // Retrofit с поддержкой RxJava
-        implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-        implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
-        implementation ("com.squareup.retrofit2:adapter-rxjava3:2.9.0")
-
-        // Для логирования запросов (опционально)
-        implementation ("com.squareup.okhttp3:logging-interceptor:4.12.0")
-    }
-
+    // Koin for Dependency Injection
+    implementation(libs.koin.core)
+    implementation(libs.koin.android)
+    implementation(libs.koin.androidx.compose)
+    implementation(libs.koin.androidx.viewmodel)
 }

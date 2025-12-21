@@ -1,4 +1,8 @@
 package com.example.core.di
 
-class ViewModelModule {
+import org.koin.dsl.module
+
+
+val viewModelModule = module {
+
 }

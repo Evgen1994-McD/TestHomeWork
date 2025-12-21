@@ -1,4 +1,8 @@
 package com.example.core.di
 
-class UseCaseModule {
+import org.koin.dsl.module
+
+
+val useCaseModule = module {
+
 }

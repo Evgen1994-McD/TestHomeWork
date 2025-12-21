@@ -1,8 +1,8 @@
-package com.example.playlistmaker.data.search.network
+package com.example.core.network
 
-import com.example.playlistmaker.data.search.dto.Response
-import com.example.playlistmaker.data.search.dto.TrackResponse
-import com.example.playlistmaker.data.search.dto.TrackSearchRequest
+
+import com.example.core.network.dto.Response
+import com.example.core.network.dto.track.TrackSearchRequest
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 

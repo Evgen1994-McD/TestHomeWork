@@ -2,15 +2,12 @@ package com.example.home.domain.impl
 
 import com.example.feature_home.domain.model.SomeBody
 import com.example.feature_home.domain.model.Track
-import com.example.home.domain.GetDataUseCase
+import com.example.home.domain.GetSomeBodyUseCase
 import com.example.home.domain.HomeRepository
 
-class GetDataUseCaseImpl(
+class GetSomeBodyUseCaseImpl(
     private val homeRepository: HomeRepository
-):GetDataUseCase {
-    override suspend fun getTracks(expression:String):List<Track>{
-        return homeRepository.searchTracks(expression)
-    }
+):GetSomeBodyUseCase {
 
     override suspend fun getSomeBody(expression:String):List<SomeBody>{
         return homeRepository.searchSomeBody(expression)
