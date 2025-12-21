@@ -21,4 +21,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "TestHomeWork"
 include(":app")
- 
+include(":core")
+include(":feature-home")
