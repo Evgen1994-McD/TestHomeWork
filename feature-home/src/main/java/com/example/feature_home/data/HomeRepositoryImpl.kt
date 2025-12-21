@@ -27,11 +27,11 @@ class HomeRepositoryImpl(
                     return data
                 }
             }
-            else -> return emptyList()
-
+            else -> {
+                return emptyList()
+            }
         }
     }
-
 
     override suspend fun searchSomeBody(expression:String):List<SomeBody>{
         val response = somebodyNetworkClient.doRequest(SomebodySearchRequest(expression))
@@ -44,8 +44,9 @@ class HomeRepositoryImpl(
                     return data
                 }
             }
-            else -> return emptyList()
-
+            else -> {
+                return emptyList()
+            }
         }
     }
 

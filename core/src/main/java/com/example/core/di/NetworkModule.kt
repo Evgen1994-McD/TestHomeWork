@@ -6,6 +6,8 @@ import com.example.core.network.ITunesApi
 import com.example.core.network.NetworkClient
 import com.example.core.network.RetrofitNetworkClient
 import com.example.core.network.RetrofitNetworkClient2
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.qualifier.named
 import org.koin.core.qualifier.qualifier
@@ -16,12 +18,21 @@ import retrofit2.converter.gson.GsonConverterFactory
 private  val TRACK_QUALIFIER = qualifier("track")
 private  val SECOND_QUALIFIER = qualifier("second")
 
+private fun createOkHttpClient(): OkHttpClient {
+    val loggingInterceptor = HttpLoggingInterceptor().apply {
+        level = HttpLoggingInterceptor.Level.BODY
+    }
+    return OkHttpClient.Builder()
+        .addInterceptor(loggingInterceptor)
+        .build()
+}
 
 val networkModule = module {
 
     single<ITunesApi>(named(TRACK_QUALIFIER.value)) {
         Retrofit.Builder()
-            .baseUrl("https://api.example.com")
+            .baseUrl("https://itunes.apple.com")
+            .client(createOkHttpClient())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(ITunesApi::class.java)
@@ -29,7 +40,8 @@ val networkModule = module {
 
     single<Api2>(named(SECOND_QUALIFIER.value)) {
         Retrofit.Builder()
-            .baseUrl("https://My.Test2.com")
+            .baseUrl("https://reqbin.com/echo/")
+            .client(createOkHttpClient())
             .addConverterFactory(GsonConverterFactory.create())
             .build()
             .create(Api2::class.java)

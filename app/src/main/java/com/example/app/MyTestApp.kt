@@ -2,9 +2,6 @@ package com.example.app
 
 import android.app.Application
 import com.example.core.di.networkModule
-import com.example.core.di.repositoryModule
-import com.example.core.di.useCaseModule
-import com.example.core.di.viewModelModule
 import com.example.feature_home.di.homeDataModule
 import com.example.feature_home.di.homeUseCaseModule
 import com.example.feature_home.di.homeViewModelModule
@@ -19,9 +16,6 @@ class MyTestApp : Application() {
         startKoin {
             androidContext(this@MyTestApp)
             modules(networkModule,
-                repositoryModule,
-                useCaseModule,
-                viewModelModule,
                 homeDataModule,
                 homeUseCaseModule,
                 homeViewModelModule)

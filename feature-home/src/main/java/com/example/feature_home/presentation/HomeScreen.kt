@@ -28,30 +28,33 @@ fun HomeScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         OutlinedTextField(
-            value = when{
-                trackState.value.toString().isEmpty() ->"Что то не так"
-                else -> {trackState.value.toString()}
-            },
+            value = textField1,
             onValueChange = { textField1 = it },
-            label = { Text("Первое поле") },
+            label = { Text("Поисковый запрос") },
             modifier = Modifier.fillMaxWidth(),
             singleLine = true
         )
 
         OutlinedTextField(
-            value = when{
-                secondState.value.toString().isEmpty() ->"Что то не так"
-                else -> {secondState.value.toString()}
-            },
-            onValueChange = { textField1 = it },
-            label = { Text("Второе поле") },
+            value = if (trackState.value.isEmpty()) "Количество треков будет показано здесь" else trackState.value,
+            onValueChange = { },
+            label = { Text("Количество найденных треков") },
             modifier = Modifier.fillMaxWidth(),
-            singleLine = true
+            singleLine = true,
+            readOnly = true
+        )
+
+        OutlinedTextField(
+            value = if (secondState.value.isEmpty()) "Количество результатов будет показано здесь" else secondState.value,
+            onValueChange = { },
+            label = { Text("Количество найденных результатов") },
+            modifier = Modifier.fillMaxWidth(),
+            singleLine = true,
+            readOnly = true
         )
 
         Button(
             onClick = {
-                // Здесь можно вызвать метод из ViewModel
                 viewModel.getTracks(textField1)
                 viewModel.getSomeBody(textField1)
             },

@@ -34,6 +34,7 @@ dependencies {
     // Retrofit
     implementation(libs.retrofit)
     implementation(libs.retrofit.converter.gson)
+    implementation(libs.okhttp.logging.interceptor)
 
     // Koin for Dependency Injection
     implementation(libs.koin.core)
