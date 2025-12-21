@@ -1,9 +1,9 @@
-package com.example.home.presentation
+package com.example.feature_home.presentation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.home.domain.GetSomeBodyUseCase
-import com.example.home.domain.GetTrackUseCase
+import com.example.feature_home.domain.GetSomeBodyUseCase
+import com.example.feature_home.domain.GetTrackUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow

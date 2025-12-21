@@ -11,7 +11,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.feature_home.presentation.HomeScreen
-import com.example.home.presentation.HomeViewModel
+import com.example.feature_home.presentation.HomeViewModel
 import org.koin.androidx.compose.koinViewModel
 
 class MainActivity : ComponentActivity() {

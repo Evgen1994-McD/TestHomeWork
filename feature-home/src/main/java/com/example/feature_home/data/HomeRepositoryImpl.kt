@@ -1,4 +1,4 @@
-package com.example.home.data
+package com.example.feature_home.data
 
 import com.example.core.network.NetworkClient
 import com.example.core.network.dto.somebody.SomeBodyResponse
@@ -9,7 +9,7 @@ import com.example.feature_home.data.mapper.SomeBodyMapper.toDomain
 import com.example.feature_home.data.mapper.TrackMapper.toDomain
 import com.example.feature_home.domain.model.SomeBody
 import com.example.feature_home.domain.model.Track
-import com.example.home.domain.HomeRepository
+import com.example.feature_home.domain.HomeRepository
 
 class HomeRepositoryImpl(
     private val trackNetworkClient: NetworkClient,
