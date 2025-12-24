@@ -1,4 +1,4 @@
-package com.example.core
+package com.example
 
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.core.databinding.ActivityMainBinding
+import com.task1.FlowerDatabase
 
 class MainActivity : AppCompatActivity(){
     private lateinit var binding: ActivityMainBinding
@@ -20,6 +21,8 @@ class MainActivity : AppCompatActivity(){
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        val database = FlowerDatabase.getDatabase(applicationContext)
 
 
     }

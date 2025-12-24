@@ -1,6 +1,7 @@
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
+    id("com.google.devtools.ksp") // для KSP (рекомендуется)
 }
 
 android {
@@ -57,6 +58,15 @@ dependencies {
     
     // WorkManager
     implementation("androidx.work:work-runtime-ktx:2.9.0")
+
+    //Room
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    // Обработчик аннотаций (компилятор)
+    // Для Kotlin-проектов рекомендуется KSP
+    ksp(libs.androidx.room.compiler)
+
+
 
 
 
