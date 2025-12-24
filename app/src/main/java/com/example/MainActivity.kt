@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.core.databinding.ActivityMainBinding
-import com.task1.FlowerDatabase
+import com.task1_2.FlowerDatabase
 
 class MainActivity : AppCompatActivity(){
     private lateinit var binding: ActivityMainBinding
@@ -22,9 +22,14 @@ class MainActivity : AppCompatActivity(){
             insets
         }
 
+        // Инициализация базы данных
+        // База автоматически создается при первом вызове getDatabase()
+        // Если база пуста, она будет заполнена начальными данными
         val database = FlowerDatabase.getDatabase(applicationContext)
-
-
+        val dao = database.flowerShopDao()
+        
+        // База данных готова к использованию
+        // При первом запуске приложения данные будут автоматически заполнены
     }
 
 }
