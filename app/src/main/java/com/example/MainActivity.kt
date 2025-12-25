@@ -7,6 +7,8 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.core.databinding.ActivityMainBinding
 import com.task2.FlowerDatabase
+import com.task4.Car_with_abstract
+import com.task4.RussiaSuperSpeedRacerFactory
 
 class MainActivity : AppCompatActivity(){
     private lateinit var binding: ActivityMainBinding
@@ -27,6 +29,16 @@ class MainActivity : AppCompatActivity(){
         // Если база пуста, она будет заполнена начальными данными
         val database = FlowerDatabase.getDatabase(applicationContext)
         val dao = database.flowerShopDao()
+
+
+        //Тест фабрики
+        val car = Car_with_abstract(
+            name = "ЛАДА",
+            color = "Голубой",
+            price = 100,
+            factory = RussiaSuperSpeedRacerFactory()
+        )
+        car.describe()
         
         // База данных готова к использованию
         // При первом запуске приложения данные будут автоматически заполнены
