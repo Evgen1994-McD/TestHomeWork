@@ -6,7 +6,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.core.databinding.ActivityMainBinding
-import com.task1.FlowerDatabase
+import com.task2.FlowerDatabase
 
 class MainActivity : AppCompatActivity(){
     private lateinit var binding: ActivityMainBinding
