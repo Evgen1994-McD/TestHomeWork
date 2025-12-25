@@ -14,5 +14,6 @@ data class FlowerEntity(
     val name: String,
 
     @ColumnInfo(name = "available_count")
-    var availableCount: Int
+    var availableCount: Int,
+    val country :String="undefined"
 )

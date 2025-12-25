@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
         BouquetEntity::class,
         FlowerBouquetEntity::class
     ],
-    version = 1,
+    version = 3,
     exportSchema = false
 )
 abstract class FlowerDatabase : RoomDatabase() {
@@ -35,6 +35,8 @@ abstract class FlowerDatabase : RoomDatabase() {
                     FlowerDatabase::class.java,
                     DATABASE_NAME
                 )
+                    .addMigrations(Migration.migration_1_2)
+                    .addMigrations(Migration.migration_2_3)
                     .addCallback(object : RoomDatabase.Callback() {
                         override fun onCreate(db: SupportSQLiteDatabase) {
                             super.onCreate(db)
@@ -165,5 +167,8 @@ abstract class FlowerDatabase : RoomDatabase() {
 
             Log.d("FlowerDatabase", "Начальные данные успешно заполнены")
         }
+
+
+
     }
 }

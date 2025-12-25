@@ -8,10 +8,9 @@ data class BouquetEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "bouquet_id")
     val bouquetId: Long = 0,
-
     @ColumnInfo(name = "name")
     val name: String,
-
     @ColumnInfo(name = "is_available")
-    var isAvailable: Boolean = true
+    var isAvailable: Boolean = true,
+    val decoration : String = "No decorations"
 )
