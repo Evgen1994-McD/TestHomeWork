@@ -1,4 +1,4 @@
-package com.task1_2
+package com.task1
 
 
 import androidx.room.ColumnInfo

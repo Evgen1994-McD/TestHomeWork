@@ -1,4 +1,4 @@
-package com.task1_2
+package com.task1
 
 import androidx.room.Dao
 import androidx.room.Embedded
@@ -52,6 +52,35 @@ interface FlowerShopDao {
     @Update
     suspend fun updateBouquet(bouquet: BouquetEntity)
 
+    // Проверка доступности букета на основе реального количества цветов
+    suspend fun isBouquetAvailable(bouquetId: Long): Boolean {
+        val bouquet = getBouquetById(bouquetId) ?: return false
+        if (!bouquet.isAvailable) return false
+        
+        val flowerComposition = getFlowersForBouquet(bouquetId)
+        // Проверяем, что для каждого цвета в букете достаточно количества
+        for (flowerWithCount in flowerComposition) {
+            if (flowerWithCount.flower.availableCount < flowerWithCount.count) {
+                return false
+            }
+        }
+        return true
+    }
+
+    // Получение списка доступных букетов с проверкой реальной доступности
+    suspend fun getAvailableBouquetsList(): List<BouquetEntity> {
+        // Получаем все букеты с флагом is_available = 1
+        val bouquetsWithFlag = getAvailableBouquetsSync()
+        // Фильтруем только те, которые реально доступны (есть достаточно цветов)
+        return bouquetsWithFlag.filter { bouquet ->
+            isBouquetAvailable(bouquet.bouquetId)
+        }
+    }
+
+    // Вспомогательный метод для получения всех букетов синхронно
+    @Query("SELECT * FROM bouquets WHERE is_available = 1")
+    suspend fun getAvailableBouquetsSync(): List<BouquetEntity>
+
     // ===== СВЯЗЬ ЦВЕТОВ И БУКЕТОВ =====
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertFlowerBouquet(flowerBouquet: FlowerBouquetEntity)
@@ -72,8 +101,7 @@ interface FlowerShopDao {
     @Transaction
     suspend fun purchaseBouquet(bouquetId: Long): PurchaseResult {
         // 1. Проверяем существование букета
-        val bouquet = getBouquetById(bouquetId) ?:
-        return PurchaseResult.Error("Букет не найден")
+        val bouquet = getBouquetById(bouquetId) ?: return PurchaseResult.Error("Букет не найден")
 
         if (!bouquet.isAvailable) {
             return PurchaseResult.Error("Букет недоступен")
@@ -97,8 +125,11 @@ interface FlowerShopDao {
             decreaseFlowerCount(flowerWithCount.flower.flowerId, flowerWithCount.count)
         }
 
-        // 5. Помечаем букет как недоступный, если нужно
-        // updateBouquet(bouquet.copy(isAvailable = false))
+        // 5. Проверяем доступность букета после покупки и обновляем флаг
+        val isStillAvailable = isBouquetAvailable(bouquetId)
+        if (!isStillAvailable && bouquet.isAvailable) {
+            updateBouquet(bouquet.copy(isAvailable = false))
+        }
 
         return PurchaseResult.Success(bouquet)
     }

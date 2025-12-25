@@ -1,4 +1,4 @@
-package com.task1_2
+package com.task1
 
 import android.content.Context
 import android.util.Log
