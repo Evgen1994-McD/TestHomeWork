@@ -36,16 +36,13 @@ fun GalleryScreen(
     val gridState = rememberLazyGridState()
     var currentText by rememberSaveable { mutableStateOf("") }
 
-    // Загружаем первую страницу при первом запуске
     LaunchedEffect(Unit) {
         val currentState = viewModel.uiState.value
-        // Загружаем только если нет данных
         if (currentState !is GalleryUiState.Success || currentState.photos.isEmpty()) {
             viewModel.loadFirstPage(currentText.ifBlank { "" })
         }
     }
 
-    // Пагинация при прокрутке
     LaunchedEffect(gridState) {
         snapshotFlow { gridState.layoutInfo.visibleItemsInfo.lastOrNull()?.index }
             .collect { lastVisibleIndex ->
@@ -122,7 +119,6 @@ fun GalleryScreen(
                 )
 
                 if (state.isPaginationError) {
-                    // Ошибка пагинации - показываем список и ошибку внизу
                     Column(modifier = Modifier.fillMaxSize()) {
                         PhotoGrid(
                             photos = state.photos,
@@ -136,7 +132,6 @@ fun GalleryScreen(
                         )
                     }
                 } else {
-                    // Ошибка первой загрузки - показываем только ошибку
                     ErrorScreen(
                         message = state.message,
                         onRetry = { viewModel.loadFirstPage(currentText.ifBlank { "" }) }

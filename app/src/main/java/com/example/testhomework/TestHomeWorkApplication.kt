@@ -10,7 +10,6 @@ class TestHomeWorkApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         
-        // Инициализация Koin
         startKoin {
             androidContext(this@TestHomeWorkApplication)
             modules(appModule)

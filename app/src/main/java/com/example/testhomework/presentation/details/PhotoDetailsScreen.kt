@@ -9,6 +9,7 @@ import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.*
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.*
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.graphicsLayer
@@ -17,10 +18,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.livedata.observeAsState
 import coil.compose.AsyncImage
-import coil.compose.AsyncImagePainter
 import coil.request.ImageRequest
 import coil.size.Size
 import com.example.testhomework.R
@@ -50,25 +48,20 @@ fun PhotoDetailsScreen(
 
     val uiState by viewModel.uiState.observeAsState()
     
-    // Получаем размер экрана для ограничения размера изображения
     val configuration = LocalConfiguration.current
     val screenWidth = configuration.screenWidthDp
     val screenHeight = configuration.screenHeightDp
     val context = LocalContext.current
 
-    // Загружаем фото при первом запуске
-    LaunchedEffect(photoUrl, photoTitle) {
-        android.util.Log.d("PhotoDetailsScreen", "Loading photo: url=$photoUrl, title=$photoTitle")
+    LaunchedEffect(photoUrl, photoTitle, photoBaseUrl) {
         viewModel.loadPhoto(photoUrl, baseUrl = photoBaseUrl, photoTitle)
     }
     
-    // Таймаут для ошибки загрузки
     LaunchedEffect(uiState) {
         if (uiState is PhotoDetailsUiState.Loading) {
-            delay(10000) // 10 секунд таймаут
+            delay(10000)
             val stateAfterDelay = viewModel.uiState.value
             if (stateAfterDelay is PhotoDetailsUiState.Loading) {
-                android.util.Log.e("PhotoDetailsScreen", "Timeout loading image: $photoUrl")
                 viewModel.onImageLoadError(Exception("Timeout loading image"))
             }
         }
@@ -110,7 +103,6 @@ fun PhotoDetailsScreen(
                         CircularProgressIndicator(
                             modifier = Modifier.align(Alignment.Center)
                         )
-                        // Показываем изображение сразу, даже в состоянии Loading
                         AsyncImage(
                             model = ImageRequest.Builder(context)
                                 .data(state.photoUrl)
@@ -120,11 +112,9 @@ fun PhotoDetailsScreen(
                             contentDescription = state.photoTitle,
                             contentScale = ContentScale.Fit,
                             onSuccess = { 
-                                android.util.Log.d("PhotoDetailsScreen", "Image loaded successfully: ${state.photoUrl}")
                                 viewModel.onImageLoaded()
                             },
                             onError = { error ->
-                                android.util.Log.e("PhotoDetailsScreen", "Image load error: ${error.result.throwable.message}", error.result.throwable)
                                 viewModel.onImageLoadError(error.result.throwable)
                             },
                             modifier = Modifier
@@ -167,13 +157,12 @@ fun PhotoDetailsScreen(
                     ErrorContent(
                         message = state.message,
                         onRetry = {
-                            viewModel.loadPhoto(state.photoUrl, photoBaseUrl, state.photoTitle)
+                            viewModel.loadPhoto(state.photoUrl, state.baseUrl, state.photoTitle)
                         },
                         modifier = Modifier.fillMaxSize()
                     )
                 }
                 else -> {
-                    // This should never happen for a sealed class, but added for exhaustiveness
                     CircularProgressIndicator(
                         modifier = Modifier.align(Alignment.Center)
                     )

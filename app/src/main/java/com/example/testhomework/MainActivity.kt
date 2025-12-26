@@ -36,7 +36,6 @@ class MainActivity : ComponentActivity() {
                         composable("gallery") {
                             GalleryScreen(
                                 onPhotoClick = { photo ->
-                                    // Используем URL encoding для безопасной передачи параметров
                                     val encodedUrl = URLEncoder.encode(photo.fullUrl, "UTF-8")
                                     val baseUrl = URLEncoder.encode(photo.thumbnailUrl, "UTF-8")
                                     val encodedTitle = URLEncoder.encode(photo.title, "UTF-8")
@@ -45,13 +44,14 @@ class MainActivity : ComponentActivity() {
                             )
                         }
                         composable(
-                            route = "photo_details/{photoUrl}/{photoTitle}",
+                            route = "photo_details/{photoUrl}/{photoTitle}/{baseUrl}",
                             arguments = listOf(
                                 navArgument("photoUrl") { type = NavType.StringType },
                                 navArgument("photoTitle") { 
                                     type = NavType.StringType
                                     defaultValue = ""
-                                }
+                                },
+                                navArgument("baseUrl") { type = NavType.StringType }
                             )
                         ) { backStackEntry ->
                             val photoUrl = URLDecoder.decode(

@@ -43,7 +43,6 @@ class PhotosRepositoryImpl(
         var allPhoto = photoDb.photoDao().getAllPhotos()
         return try {
             val response = if (searchQuery.isBlank()) {
-                // Используем getRecent для получения популярных фото при пустом запросе
                 api.getRecentPhotos(
                     perPage = pageSize,
                     page = page
@@ -77,11 +76,9 @@ class PhotosRepositoryImpl(
                     it.thumbnailUrl.isNotEmpty() && it.fullUrl.isNotEmpty()
                 }
 
-                // Проверяем загрузку изображений и сохраняем только успешно загруженные
                 coroutineScope {
                     validPhotos.map { photo ->
                         async {
-                            // Проверяем загрузку thumbnail (можно проверить и fullUrl, если нужно)
                             if (canLoadImage(photo.thumbnailUrl)) {
                                 savePhoto(photo)
                                 photo

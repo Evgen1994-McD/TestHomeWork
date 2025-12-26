@@ -24,7 +24,6 @@ abstract class UseCase<in P, R>(
                 Result.success(result)
             }
         } catch (e: Exception) {
-            android.util.Log.e("UseCase", "Error in UseCase: ${e.message}", e)
             Result.failure(e)
         }
     }

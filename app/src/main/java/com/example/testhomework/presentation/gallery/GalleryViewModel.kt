@@ -26,7 +26,6 @@ class GalleryViewModel(
 
     fun loadFirstPage(searchQuery: String) {
         if (isLoadingPage) return
-        // Если уже есть загруженные данные, не перезагружаем
         val currentState = _uiState.value
         val trimmedQuery = searchQuery.trim()
         if (currentState is GalleryUiState.Success && currentState.photos.isNotEmpty() && trimmedQuery == currentSearchText) {
@@ -93,7 +92,6 @@ class GalleryViewModel(
                         else -> emptyList()
                     }
                     val errorMessage = ErrorHandler.getErrorMessage(throwable, getApplication())
-                    // Если это ошибка пагинации (не первая загрузка и есть данные), показываем ошибку внизу
                     val isPaginationError = !reset && currentPhotos.isNotEmpty()
                     _uiState.value = GalleryUiState.Error(
                         message = errorMessage,
