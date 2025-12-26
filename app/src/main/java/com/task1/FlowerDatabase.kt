@@ -1,7 +1,6 @@
 package com.task1
 
 import android.content.Context
-import android.util.Log
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
@@ -65,7 +64,6 @@ abstract class FlowerDatabase : RoomDatabase() {
             val dao = database.flowerShopDao()
             // Проверяем, пуста ли база данных
             if (dao.isDatabaseEmpty()) {
-                Log.d("FlowerDatabase", "База данных пуста, заполняем начальными данными...")
                 fillInitialData(database)
             }
         }
@@ -162,8 +160,6 @@ abstract class FlowerDatabase : RoomDatabase() {
                     count = 7
                 )
             )
-
-            Log.d("FlowerDatabase", "Начальные данные успешно заполнены")
         }
     }
 }
