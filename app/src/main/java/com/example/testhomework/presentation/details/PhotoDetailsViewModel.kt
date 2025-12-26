@@ -15,8 +15,9 @@ class PhotoDetailsViewModel(
     private val _uiState = MutableLiveData<PhotoDetailsUiState>()
     val uiState: LiveData<PhotoDetailsUiState> = _uiState
 
-    fun loadPhoto(photoUrl: String, photoTitle: String) {
+    fun loadPhoto(photoUrl: String, baseUrl:String, photoTitle: String) {
         if (photoUrl.isEmpty()) {
+           
             _uiState.value = PhotoDetailsUiState.Error(
                 photoUrl = photoUrl,
                 photoTitle = photoTitle,

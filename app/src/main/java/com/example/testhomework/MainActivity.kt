@@ -15,6 +15,8 @@ import androidx.navigation.navArgument
 import com.example.testhomework.presentation.details.PhotoDetailsScreen
 import com.example.testhomework.presentation.gallery.GalleryScreen
 import com.example.testhomework.ui.theme.TestHomeWorkTheme
+import java.net.URLDecoder
+import java.net.URLEncoder
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -35,9 +37,10 @@ class MainActivity : ComponentActivity() {
                             GalleryScreen(
                                 onPhotoClick = { photo ->
                                     // Используем URL encoding для безопасной передачи параметров
-                                    val encodedUrl = java.net.URLEncoder.encode(photo.fullUrl, "UTF-8")
-                                    val encodedTitle = java.net.URLEncoder.encode(photo.title, "UTF-8")
-                                    navController.navigate("photo_details/$encodedUrl/$encodedTitle")
+                                    val encodedUrl = URLEncoder.encode(photo.fullUrl, "UTF-8")
+                                    val baseUrl = URLEncoder.encode(photo.thumbnailUrl, "UTF-8")
+                                    val encodedTitle = URLEncoder.encode(photo.title, "UTF-8")
+                                    navController.navigate("photo_details/$encodedUrl/$encodedTitle/$baseUrl")
                                 }
                             )
                         }
@@ -51,11 +54,15 @@ class MainActivity : ComponentActivity() {
                                 }
                             )
                         ) { backStackEntry ->
-                            val photoUrl = java.net.URLDecoder.decode(
+                            val photoUrl = URLDecoder.decode(
                                 backStackEntry.arguments?.getString("photoUrl") ?: "",
                                 "UTF-8"
                             )
-                            val photoTitle = java.net.URLDecoder.decode(
+                            val baseUrl = URLDecoder.decode(
+                                backStackEntry.arguments?.getString("baseUrl") ?: "",
+                                "UTF-8"
+                            )
+                            val photoTitle = URLDecoder.decode(
                                 backStackEntry.arguments?.getString("photoTitle") ?: "",
                                 "UTF-8"
                             )
@@ -63,7 +70,8 @@ class MainActivity : ComponentActivity() {
                             PhotoDetailsScreen(
                                 photoUrl = photoUrl,
                                 photoTitle = photoTitle,
-                                onBackClick = { navController.popBackStack() }
+                                onBackClick = { navController.popBackStack() },
+                                photoBaseUrl = baseUrl
                             )
                         }
                     }

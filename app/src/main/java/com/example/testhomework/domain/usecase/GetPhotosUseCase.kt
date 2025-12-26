@@ -15,13 +15,15 @@ class GetPhotosUseCase(
      */
     data class Params(
         val page: Int,
-        val pageSize: Int
+        val pageSize: Int,
+        val searchQuery:String
     )
 
     override suspend fun execute(params: Params): PhotosPage {
         return repository.searchPhotos(
             page = params.page,
-            pageSize = params.pageSize
+            pageSize = params.pageSize,
+            params.searchQuery
         ).getOrThrow()
     }
 }

@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -41,6 +42,9 @@ android {
 
 dependencies {
     implementation(libs.androidx.core.ktx)
+
+
+
     
     // Material Components for View-based themes (needed for AndroidManifest)
     implementation("com.google.android.material:material:1.12.0")
@@ -69,7 +73,7 @@ dependencies {
     
     // Coil for image loading (Compose alternative to Glide)
     implementation("io.coil-kt:coil-compose:2.5.0")
-
+    implementation("io.coil-kt:coil-base:2.5.0")
     // Retrofit + Gson
     implementation("com.squareup.retrofit2:retrofit:2.11.0")
     implementation("com.squareup.retrofit2:converter-gson:2.11.0")
@@ -87,4 +91,9 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
+
+    //room
+    implementation(libs.room.runtime)
+    implementation(libs.room.kxt)
+    ksp(libs.room.compiler)
 }

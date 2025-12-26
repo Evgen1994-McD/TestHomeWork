@@ -15,7 +15,18 @@ interface FlickrApiService {
         @Query("extras") extras: String = "url_sq,url_t,url_q,url_z,url_l",
         @Query("per_page") perPage: Int,
         @Query("page") page: Int,
-        @Query("text") text: String = "kittens"
+        @Query("text") text: String
+    ): FlickrSearchResponse
+
+    @GET("services/rest")
+    suspend fun getRecentPhotos(
+        @Query("method") method: String = "flickr.photos.getRecent",
+        @Query("api_key") apiKey: String = FlickrConfig.API_KEY,
+        @Query("format") format: String = "json",
+        @Query("nojsoncallback") noJsonCallback: Int = 1,
+        @Query("extras") extras: String = "url_sq,url_t,url_q,url_z,url_l",
+        @Query("per_page") perPage: Int,
+        @Query("page") page: Int
     ): FlickrSearchResponse
 }
 

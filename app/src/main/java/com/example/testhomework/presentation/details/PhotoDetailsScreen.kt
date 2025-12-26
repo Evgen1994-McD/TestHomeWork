@@ -33,7 +33,8 @@ fun PhotoDetailsScreen(
     photoUrl: String,
     photoTitle: String,
     onBackClick: () -> Unit,
-    viewModel: PhotoDetailsViewModel = koinViewModel()
+    viewModel: PhotoDetailsViewModel = koinViewModel(),
+    photoBaseUrl:String
 ) {
     var scale by remember { mutableStateOf(1f) }
     var rotation by remember { mutableStateOf(0f) }
@@ -58,7 +59,7 @@ fun PhotoDetailsScreen(
     // Загружаем фото при первом запуске
     LaunchedEffect(photoUrl, photoTitle) {
         android.util.Log.d("PhotoDetailsScreen", "Loading photo: url=$photoUrl, title=$photoTitle")
-        viewModel.loadPhoto(photoUrl, photoTitle)
+        viewModel.loadPhoto(photoUrl, baseUrl = photoBaseUrl, photoTitle)
     }
     
     // Таймаут для ошибки загрузки
@@ -166,7 +167,7 @@ fun PhotoDetailsScreen(
                     ErrorContent(
                         message = state.message,
                         onRetry = {
-                            viewModel.loadPhoto(state.photoUrl, state.photoTitle)
+                            viewModel.loadPhoto(state.photoUrl, photoBaseUrl, state.photoTitle)
                         },
                         modifier = Modifier.fillMaxSize()
                     )

@@ -13,6 +13,7 @@ class GalleryViewModel(
     application: Application,
     private val getPhotosUseCase: GetPhotosUseCase
 ) : AndroidViewModel(application) {
+    private var currentSearchText = ""
 
     private val _uiState = MutableLiveData<GalleryUiState>(GalleryUiState.Loading())
     val uiState: LiveData<GalleryUiState> = _uiState
@@ -22,19 +23,20 @@ class GalleryViewModel(
     private val pageSize = 4
     private var isLoadingPage = false
 
-    fun loadFirstPage() {
+
+    fun loadFirstPage(searchQuery: String) {
         if (isLoadingPage) return
-        
         // Если уже есть загруженные данные, не перезагружаем
         val currentState = _uiState.value
-        if (currentState is GalleryUiState.Success && currentState.photos.isNotEmpty()) {
+        val trimmedQuery = searchQuery.trim()
+        if (currentState is GalleryUiState.Success && currentState.photos.isNotEmpty() && trimmedQuery == currentSearchText) {
             return
         }
-        
+        currentSearchText = trimmedQuery
         currentPage = 1
         isLastPage = false
         _uiState.value = GalleryUiState.Loading()
-        loadPage(currentPage, reset = true)
+        loadPage(currentPage, reset = true, trimmedQuery)
     }
 
     fun loadNextPage() {
@@ -43,20 +45,28 @@ class GalleryViewModel(
         if (currentState is GalleryUiState.Success) {
             _uiState.value = currentState.copy(isLoadingMore = true)
         }
-        loadPage(currentPage + 1, reset = false)
+        loadPage(
+            currentPage + 1, reset = false,
+            searchQuery = currentSearchText
+        )
     }
 
-    private fun loadPage(page: Int, reset: Boolean) {
+    private fun loadPage(
+        page: Int,
+        reset: Boolean,
+        searchQuery: String
+    ) {
         viewModelScope.launch {
             isLoadingPage = true
 
             val result = getPhotosUseCase(
                 GetPhotosUseCase.Params(
                     page = page,
-                    pageSize = pageSize
+                    pageSize = pageSize,
+                    searchQuery = searchQuery
                 )
             )
-            
+
             result
                 .onSuccess { photosPage ->
                     currentPage = photosPage.page
@@ -70,7 +80,7 @@ class GalleryViewModel(
                             else -> emptyList()
                         }
                     }
-                    val newPhotos = currentList + photosPage.photos
+                    val newPhotos = (currentList + photosPage.photos).distinctBy { it.id }
                     _uiState.value = GalleryUiState.Success(
                         photos = newPhotos,
                         isLoadingMore = false

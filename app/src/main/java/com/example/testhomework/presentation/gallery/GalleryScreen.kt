@@ -1,5 +1,6 @@
 package com.example.testhomework.presentation.gallery
 
+import android.content.res.Configuration
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -18,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import coil.size.Size
@@ -32,13 +34,14 @@ fun GalleryScreen(
 ) {
     val uiState by viewModel.uiState.observeAsState()
     val gridState = rememberLazyGridState()
+    var currentText by rememberSaveable { mutableStateOf("") }
 
     // Загружаем первую страницу при первом запуске
     LaunchedEffect(Unit) {
         val currentState = viewModel.uiState.value
         // Загружаем только если нет данных
         if (currentState !is GalleryUiState.Success || currentState.photos.isEmpty()) {
-            viewModel.loadFirstPage()
+            viewModel.loadFirstPage(currentText.ifBlank { "" })
         }
     }
 
@@ -62,6 +65,7 @@ fun GalleryScreen(
                 CircularProgressIndicator()
             }
         }
+
         is GalleryUiState.Loading -> {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -70,8 +74,24 @@ fun GalleryScreen(
                 CircularProgressIndicator()
             }
         }
+
         is GalleryUiState.Success -> {
             Column(modifier = Modifier.fillMaxSize()) {
+
+                SearchBar(
+                    searchText = currentText,
+                    onSearchTextChange = { currentText = it },
+                    onSearch = {
+                        viewModel.loadFirstPage(searchQuery = currentText.ifBlank { "" })
+                    },
+                    modifier =  Modifier
+                        .padding(8.dp)
+                        .padding(top = 16.dp)
+
+                )
+
+
+
                 PhotoGrid(
                     photos = state.photos,
                     gridState = gridState,
@@ -85,27 +105,43 @@ fun GalleryScreen(
                 }
             }
         }
+
         is GalleryUiState.Error -> {
-            if (state.isPaginationError) {
-                // Ошибка пагинации - показываем список и ошибку внизу
-                Column(modifier = Modifier.fillMaxSize()) {
-                    PhotoGrid(
-                        photos = state.photos,
-                        gridState = gridState,
-                        onPhotoClick = onPhotoClick,
-                        modifier = Modifier.weight(1f)
-                    )
-                    PaginationErrorBar(
+            Column(modifier = Modifier.fillMaxSize()) {
+
+                SearchBar(
+                    searchText = currentText,
+                    onSearchTextChange = { currentText = it },
+                    onSearch = {
+                        viewModel.loadFirstPage(searchQuery = currentText.ifBlank { "" })
+                    },
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .padding(top = 16.dp)
+
+                )
+
+                if (state.isPaginationError) {
+                    // Ошибка пагинации - показываем список и ошибку внизу
+                    Column(modifier = Modifier.fillMaxSize()) {
+                        PhotoGrid(
+                            photos = state.photos,
+                            gridState = gridState,
+                            onPhotoClick = onPhotoClick,
+                            modifier = Modifier.weight(1f)
+                        )
+                        PaginationErrorBar(
+                            message = state.message,
+                            onRetry = { viewModel.loadNextPage() }
+                        )
+                    }
+                } else {
+                    // Ошибка первой загрузки - показываем только ошибку
+                    ErrorScreen(
                         message = state.message,
-                        onRetry = { viewModel.loadNextPage() }
+                        onRetry = { viewModel.loadFirstPage(currentText.ifBlank { "" }) }
                     )
                 }
-            } else {
-                // Ошибка первой загрузки - показываем только ошибку
-                ErrorScreen(
-                    message = state.message,
-                    onRetry = { viewModel.loadFirstPage() }
-                )
             }
         }
     }
@@ -116,30 +152,33 @@ private fun PhotoGrid(
     photos: List<Photo>,
     gridState: LazyGridState,
     onPhotoClick: (Photo) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+
 ) {
     val configuration = LocalConfiguration.current
-    val spanCount = if (configuration.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE) {
-        4
-    } else {
-        2
+    val spanCount =
+        if (configuration.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            4
+        } else {
+            2
+        }
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(spanCount),
+            state = gridState,
+            contentPadding = PaddingValues(4.dp),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp),
+            modifier = modifier
+        ) {
+            items(photos, key = { it.id }) { photo ->
+                PhotoItem(
+                    photo = photo,
+                    onClick = { onPhotoClick(photo) }
+                )
+            }
+
     }
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(spanCount),
-        state = gridState,
-        contentPadding = PaddingValues(4.dp),
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalArrangement = Arrangement.spacedBy(4.dp),
-        modifier = modifier
-    ) {
-        items(photos, key = { it.id }) { photo ->
-            PhotoItem(
-                photo = photo,
-                onClick = { onPhotoClick(photo) }
-            )
-        }
-    }
 }
 
 @Composable
@@ -221,3 +260,29 @@ private fun PaginationErrorBar(
         }
     }
 }
+
+@Composable
+private fun SearchBar(
+    searchText: String,
+    onSearchTextChange: (String) -> Unit,
+    onSearch: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        OutlinedTextField(
+            value = searchText,
+            onValueChange = onSearchTextChange,
+            label = { Text("Поиск по теме") },
+            modifier = Modifier.weight(1f),
+            singleLine = true
+        )
+        Button(onClick = onSearch) {
+            Text("Поиск")
+        }
+    }
+}
+
