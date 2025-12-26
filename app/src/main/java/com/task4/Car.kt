@@ -21,7 +21,7 @@ class Car private constructor(
         fun maxSpeed(maxSpeed: Int?) = apply { this.maxSpeed = maxSpeed }
         fun country(country: String?) = apply { this.country = country }
         fun muscle(muscle: Int?) = apply { this.muscle = muscle }
-        fun buidl(): Car {
+        fun build(): Car {
             return Car(name, color, price, maxSpeed, country, muscle)
         }
 
@@ -32,4 +32,4 @@ val myTestCar = Car.Builder("Lada", "White", 100)
     .maxSpeed(150)
     .muscle(98)
     .country("Russia")
-    .buidl()
+    .build()
