@@ -21,7 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.core.data.Languages
-import com.example.core.data.repository.SortType
+import com.example.core.domain.repository.SortType
 import com.example.core.di.AppModule
 import com.example.core.domain.model.Translation
 import com.example.core.ui.ViewModelFactory
@@ -32,24 +32,26 @@ import java.util.*
 @Composable
 fun HistoryScreen(
     viewModel: HistoryViewModel = viewModel(
-        factory = ViewModelFactory(AppModule.getRepository(LocalContext.current))
+        factory = ViewModelFactory(
+            translateUseCase = AppModule.getTranslateUseCase(LocalContext.current),
+            getTranslationHistoryUseCase = AppModule.getTranslationHistoryUseCase(LocalContext.current),
+            deleteTranslationUseCase = AppModule.getDeleteTranslationUseCase(LocalContext.current)
+        )
     )
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        // Заголовок
         Text(
             text = "История переводов",
             style = MaterialTheme.typography.headlineLarge,
             modifier = Modifier.padding(bottom = 16.dp)
         )
-        
-        // Фильтры и сортировка
+
         Card(
             modifier = Modifier.fillMaxWidth(),
             colors = CardDefaults.cardColors(
@@ -60,12 +62,10 @@ fun HistoryScreen(
                 modifier = Modifier.padding(12.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                // Фильтры по языкам
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
-                    // Фильтр исходного языка
                     var expandedSource by remember { mutableStateOf(false) }
                     ExposedDropdownMenuBox(
                         expanded = expandedSource,
@@ -73,7 +73,11 @@ fun HistoryScreen(
                         modifier = Modifier.weight(1f)
                     ) {
                         OutlinedTextField(
-                            value = uiState.selectedSourceLanguage?.let { Languages.getLanguageName(it) } ?: "Все языки (от)",
+                            value = uiState.selectedSourceLanguage?.let {
+                                Languages.getLanguageName(
+                                    it
+                                )
+                            } ?: "Все языки (от)",
                             onValueChange = {},
                             readOnly = true,
                             label = { Text("Язык источника") },
@@ -104,8 +108,7 @@ fun HistoryScreen(
                             }
                         }
                     }
-                    
-                    // Фильтр целевого языка
+
                     var expandedTarget by remember { mutableStateOf(false) }
                     ExposedDropdownMenuBox(
                         expanded = expandedTarget,
@@ -113,7 +116,11 @@ fun HistoryScreen(
                         modifier = Modifier.weight(1f)
                     ) {
                         OutlinedTextField(
-                            value = uiState.selectedTargetLanguage?.let { Languages.getLanguageName(it) } ?: "Все языки (на)",
+                            value = uiState.selectedTargetLanguage?.let {
+                                Languages.getLanguageName(
+                                    it
+                                )
+                            } ?: "Все языки (на)",
                             onValueChange = {},
                             readOnly = true,
                             label = { Text("Язык назначения") },
@@ -145,8 +152,7 @@ fun HistoryScreen(
                         }
                     }
                 }
-                
-                // Сортировка
+
                 var expandedSort by remember { mutableStateOf(false) }
                 ExposedDropdownMenuBox(
                     expanded = expandedSort,
@@ -177,8 +183,7 @@ fun HistoryScreen(
                         }
                     }
                 }
-                
-                // Кнопка сброса фильтров
+
                 if (uiState.selectedSourceLanguage != null || uiState.selectedTargetLanguage != null) {
                     TextButton(
                         onClick = { viewModel.clearFilters() },
@@ -189,10 +194,9 @@ fun HistoryScreen(
                 }
             }
         }
-        
+
         Spacer(modifier = Modifier.height(16.dp))
-        
-        // Список переводов
+
         if (uiState.isLoading) {
             Box(
                 modifier = Modifier.fillMaxSize(),
@@ -238,13 +242,13 @@ fun SwipeToDeleteTranslationItem(
 ) {
     val dismissState = rememberDismissState()
     val dismissDirection = DismissDirection.EndToStart
-    
+
     LaunchedEffect(dismissState.currentValue) {
         if (dismissState.currentValue == DismissValue.DismissedToStart) {
             onDelete()
         }
     }
-    
+
     SwipeToDismiss(
         state = dismissState,
         directions = setOf(dismissDirection),
@@ -292,7 +296,11 @@ fun TranslationItemCard(translation: Translation) {
                 horizontalArrangement = Arrangement.SpaceBetween
             ) {
                 Text(
-                    text = "${Languages.getLanguageName(translation.sourceLanguage)} → ${Languages.getLanguageName(translation.targetLanguage)}",
+                    text = "${Languages.getLanguageName(translation.sourceLanguage)} → ${
+                        Languages.getLanguageName(
+                            translation.targetLanguage
+                        )
+                    }",
                     style = MaterialTheme.typography.labelMedium,
                     color = MaterialTheme.colorScheme.primary
                 )
@@ -302,17 +310,15 @@ fun TranslationItemCard(translation: Translation) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
             }
-            
+
             Divider()
-            
-            // Исходный текст
+
             Text(
                 text = translation.sourceText,
                 style = MaterialTheme.typography.bodyLarge,
                 fontWeight = FontWeight.Bold
             )
-            
-            // Переведенный текст
+
             Text(
                 text = translation.translatedText,
                 style = MaterialTheme.typography.bodyMedium,

@@ -2,7 +2,7 @@ package com.example.core.ui.translation
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.core.data.repository.TranslationRepository
+import com.example.core.domain.usecase.TranslateUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,7 +18,7 @@ data class TranslationUiState(
 )
 
 class TranslationViewModel(
-    private val repository: TranslationRepository
+    private val translateUseCase: TranslateUseCase
 ) : ViewModel() {
     
     private val _uiState = MutableStateFlow(TranslationUiState())
@@ -53,7 +53,7 @@ class TranslationViewModel(
         viewModelScope.launch {
             _uiState.value = currentState.copy(isLoading = true, errorMessage = null)
             
-            val result = repository.translate(
+            val result = translateUseCase(
                 sourceText = sourceText,
                 sourceLanguage = currentState.sourceLanguage,
                 targetLanguage = currentState.targetLanguage

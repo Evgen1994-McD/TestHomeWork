@@ -3,7 +3,6 @@ package com.example.core.ui.translation
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -16,6 +15,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.sp
+import com.example.core.R
 import com.example.core.di.AppModule
 import com.example.core.ui.ViewModelFactory
 import com.example.core.data.Languages
@@ -24,32 +27,35 @@ import com.example.core.data.Languages
 @Composable
 fun TranslationScreen(
     viewModel: TranslationViewModel = viewModel(
-        factory = ViewModelFactory(AppModule.getRepository(LocalContext.current))
+        factory = ViewModelFactory(
+            translateUseCase = AppModule.getTranslateUseCase(LocalContext.current),
+            getTranslationHistoryUseCase = AppModule.getTranslationHistoryUseCase(LocalContext.current),
+            deleteTranslationUseCase = AppModule.getDeleteTranslationUseCase(LocalContext.current)
+        )
     )
 ) {
     val uiState by viewModel.uiState.collectAsState()
-    
+
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        // Заголовок
         Text(
             text = "Переводчик",
             style = MaterialTheme.typography.headlineLarge,
             modifier = Modifier.padding(bottom = 8.dp)
         )
-        
-        // Выбор языков
+
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp)
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            // Исходный язык
             Column(
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.Center
             ) {
                 Text(
                     text = "С",
@@ -68,7 +74,10 @@ fun TranslationScreen(
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedSource) },
                         modifier = Modifier
                             .menuAnchor()
-                            .fillMaxWidth()
+                            .fillMaxWidth(),
+                        textStyle = TextStyle(fontSize = 12.sp),
+                        singleLine = true
+
                     )
                     ExposedDropdownMenu(
                         expanded = expandedSource,
@@ -76,7 +85,12 @@ fun TranslationScreen(
                     ) {
                         Languages.supportedLanguages.forEach { language ->
                             DropdownMenuItem(
-                                text = { Text(language.name) },
+                                text = {
+                                    Text(
+                                        language.name,
+                                        fontSize = 12.sp
+                                    )
+                                },
                                 onClick = {
                                     viewModel.setSourceLanguage(language.code)
                                     expandedSource = false
@@ -86,23 +100,23 @@ fun TranslationScreen(
                     }
                 }
             }
-            
-            // Кнопка обмена языков
+
             IconButton(
                 onClick = {
                     val temp = uiState.sourceLanguage
                     viewModel.setSourceLanguage(uiState.targetLanguage)
                     viewModel.setTargetLanguage(temp)
                 },
-                modifier = Modifier.align(Alignment.CenterVertically)
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .offset(y=12.dp)
             ) {
                 Icon(
-                    imageVector = Icons.Default.Delete,
+                    painterResource(R.drawable.change_arrow),
                     contentDescription = "Поменять языки"
                 )
             }
-            
-            // Целевой язык
+
             Column(
                 modifier = Modifier.weight(1f)
             ) {
@@ -123,7 +137,10 @@ fun TranslationScreen(
                         trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expandedTarget) },
                         modifier = Modifier
                             .menuAnchor()
-                            .fillMaxWidth()
+                            .fillMaxWidth(),
+                        textStyle = TextStyle(fontSize = 12.sp),
+                        singleLine = true
+
                     )
                     ExposedDropdownMenu(
                         expanded = expandedTarget,
@@ -142,8 +159,7 @@ fun TranslationScreen(
                 }
             }
         }
-        
-        // Поле ввода текста
+
         OutlinedTextField(
             value = uiState.sourceText,
             onValueChange = { viewModel.setSourceText(it) },
@@ -152,8 +168,7 @@ fun TranslationScreen(
             minLines = 3,
             maxLines = 5
         )
-        
-        // Кнопка перевода
+
         Button(
             onClick = { viewModel.translate() },
             modifier = Modifier.fillMaxWidth(),
@@ -168,13 +183,11 @@ fun TranslationScreen(
             }
             Text("Перевести")
         }
-        
-        // ProgressBar (отдельный, если нужно)
+
         if (uiState.isLoading) {
             LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
         }
-        
-        // Поле результата
+
         OutlinedTextField(
             value = uiState.translatedText,
             onValueChange = {},
@@ -186,8 +199,7 @@ fun TranslationScreen(
             minLines = 3,
             maxLines = 10
         )
-        
-        // Сообщение об ошибке
+
         uiState.errorMessage?.let { error ->
             Card(
                 modifier = Modifier.fillMaxWidth(),

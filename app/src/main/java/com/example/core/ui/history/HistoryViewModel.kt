@@ -2,9 +2,10 @@ package com.example.core.ui.history
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.core.data.repository.SortType
-import com.example.core.data.repository.TranslationRepository
+import com.example.core.domain.repository.SortType
 import com.example.core.domain.model.Translation
+import com.example.core.domain.usecase.DeleteTranslationUseCase
+import com.example.core.domain.usecase.GetTranslationHistoryUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,7 +21,8 @@ data class HistoryUiState(
 )
 
 class HistoryViewModel(
-    private val repository: TranslationRepository
+    private val getTranslationHistoryUseCase: GetTranslationHistoryUseCase,
+    private val deleteTranslationUseCase: DeleteTranslationUseCase
 ) : ViewModel() {
     
     private val _uiState = MutableStateFlow(HistoryUiState())
@@ -37,7 +39,7 @@ class HistoryViewModel(
         currentJob = viewModelScope.launch {
             _uiState.value = _uiState.value.copy(isLoading = true)
             
-            repository.getAllTranslationsSorted(_uiState.value.sortType).collect { translations ->
+            getTranslationHistoryUseCase(_uiState.value.sortType).collect { translations ->
                 val currentState = _uiState.value
                 val filtered = translations.filter { translation ->
                     (currentState.selectedSourceLanguage == null || 
@@ -87,8 +89,7 @@ class HistoryViewModel(
     
     fun deleteTranslation(translation: Translation) {
         viewModelScope.launch {
-            repository.deleteTranslation(translation)
-            // Обновление произойдет автоматически через Flow
+            deleteTranslationUseCase(translation)
         }
     }
     

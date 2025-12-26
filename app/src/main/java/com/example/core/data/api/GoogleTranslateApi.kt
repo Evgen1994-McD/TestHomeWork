@@ -11,6 +11,6 @@ interface GoogleTranslateApi {
         @Query("sl") sourceLanguage: String,
         @Query("tl") targetLanguage: String,
         @Query("q") query: String
-    ): List<List<Any>>
+    ): List<Any>
 }
 
