@@ -1,6 +1,5 @@
 package com.example.core.data.repository
 
-import com.example.core.data.api.GoogleTranslateService
 import com.example.core.data.dataSource.RemoteDataSource
 import com.example.core.data.database.TranslationDao
 import com.example.core.data.database.TranslationEntity
@@ -10,7 +9,7 @@ import com.example.core.domain.repository.TranslationRepository as TranslationRe
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
-class TranslationRepository(
+class RemoteTranslationRepository(
     private val translationDao: TranslationDao,
     private val remoteDataSource: RemoteDataSource
 ) : TranslationRepositoryDomain {

@@ -1,11 +1,10 @@
 package com.example.core.di
 
 import android.content.Context
-import com.example.core.data.api.GoogleTranslateApi
 import com.example.core.data.api.GoogleTranslateService
 import com.example.core.data.dataSource.RemoteDataSource
 import com.example.core.data.database.TranslationDatabase
-import com.example.core.data.repository.TranslationRepository
+import com.example.core.data.repository.RemoteTranslationRepository
 import com.example.core.domain.repository.TranslationRepository as TranslationRepositoryDomain
 import com.example.core.domain.usecase.DeleteTranslationUseCase
 import com.example.core.domain.usecase.GetTranslationHistoryUseCase
@@ -42,7 +41,7 @@ object AppModule {
     fun getRepository(context: Context): TranslationRepositoryDomain {
         if (repository == null) {
             val db = getDatabase(context)
-            repository = TranslationRepository(db.translationDao(), getRemoteDataSource(context))
+            repository = RemoteTranslationRepository(db.translationDao(), getRemoteDataSource(context))
         }
         return repository!!
     }

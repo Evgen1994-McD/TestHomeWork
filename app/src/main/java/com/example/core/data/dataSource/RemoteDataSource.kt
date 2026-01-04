@@ -3,6 +3,8 @@ package com.example.core.data.dataSource
 import com.example.core.data.api.GoogleTranslateService
 import com.example.core.data.database.TranslationDao
 import com.example.core.data.database.TranslationEntity
+import kotlinx.coroutines.delay
+import kotlin.random.Random
 
 class RemoteDataSource(
     private val translationDao: TranslationDao,
@@ -13,6 +15,8 @@ class RemoteDataSource(
         sourceLanguage: String,
         targetLanguage: String
     ): Result<String> {
+        val delay =Random.nextLong(300, 1000)
+        delay(delay)
         return try {
             val response = api.translate(
                 sourceLanguage = sourceLanguage,
