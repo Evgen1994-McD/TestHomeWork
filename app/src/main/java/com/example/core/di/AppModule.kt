@@ -1,6 +1,9 @@
 package com.example.core.di
 
 import android.content.Context
+import com.example.core.data.api.GoogleTranslateApi
+import com.example.core.data.api.GoogleTranslateService
+import com.example.core.data.dataSource.RemoteDataSource
 import com.example.core.data.database.TranslationDatabase
 import com.example.core.data.repository.TranslationRepository
 import com.example.core.domain.repository.TranslationRepository as TranslationRepositoryDomain
@@ -17,7 +20,18 @@ object AppModule {
     private var translateUseCase: TranslateUseCase? = null
     private var historyUseCase: GetTranslationHistoryUseCase? = null
     private var deleteTranslationUseCase: DeleteTranslationUseCase? = null
-    
+
+    private var remoteDataSource: RemoteDataSource? = null
+
+    fun getRemoteDataSource(context: Context):RemoteDataSource{
+        if (remoteDataSource==null){
+            val db = getDatabase(context)
+           remoteDataSource = RemoteDataSource(db.translationDao(), GoogleTranslateService.api)
+        }
+        return remoteDataSource!!
+    }
+
+
     fun getDatabase(context: Context): TranslationDatabase {
         if (database == null) {
             database = TranslationDatabase.getDatabase(context)
@@ -28,7 +42,7 @@ object AppModule {
     fun getRepository(context: Context): TranslationRepositoryDomain {
         if (repository == null) {
             val db = getDatabase(context)
-            repository = TranslationRepository(db.translationDao())
+            repository = TranslationRepository(db.translationDao(), getRemoteDataSource(context))
         }
         return repository!!
     }
@@ -53,5 +67,8 @@ object AppModule {
         }
         return deleteTranslationUseCase!!
     }
+
+
+
 }
 

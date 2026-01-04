@@ -1,6 +1,7 @@
 package com.example.core.data.repository
 
 import com.example.core.data.api.GoogleTranslateService
+import com.example.core.data.dataSource.RemoteDataSource
 import com.example.core.data.database.TranslationDao
 import com.example.core.data.database.TranslationEntity
 import com.example.core.domain.model.Translation
@@ -11,7 +12,7 @@ import kotlinx.coroutines.flow.map
 
 class TranslationRepository(
     private val translationDao: TranslationDao,
-    private val api: com.example.core.data.api.GoogleTranslateApi = GoogleTranslateService.api
+    private val remoteDataSource: RemoteDataSource
 ) : TranslationRepositoryDomain {
     
     override suspend fun translate(
@@ -23,56 +24,8 @@ class TranslationRepository(
         if (cached != null) {
             return Result.success(cached.translatedText)
         }
-        
-        return try {
-            val response = api.translate(
-                sourceLanguage = sourceLanguage,
-                targetLanguage = targetLanguage,
-                query = sourceText
-            )
-            
-            val translatedText = try {
-                when {
-                    response.isNotEmpty() && response[0] is String -> {
-                        (response[0] as String)
-                    }
-                    response.isNotEmpty() && response[0] is List<*> -> {
-                        val firstArray = response[0] as List<*>
-                        when {
-                            firstArray.isNotEmpty() && firstArray[0] is String -> {
-                                firstArray[0] as String
-                            }
-                            firstArray.isNotEmpty() && firstArray[0] is List<*> -> {
-                                val innerArray = firstArray[0] as List<*>
-                                innerArray.filterIsInstance<String>().joinToString(" ")
-                            }
-                            firstArray.all { it is String } -> {
-                                firstArray.filterIsInstance<String>().joinToString(" ")
-                            }
-                            else -> {
-                                throw Exception("Translation text not found in response")
-                            }
-                        }
-                    }
-                    else -> throw Exception("Empty or invalid response")
-                }
-            } catch (e: Exception) {
-                throw Exception("Failed to parse translation response: ${e.message}", e)
-            }
-            
-            val entity = TranslationEntity(
-                sourceText = sourceText,
-                translatedText = translatedText,
-                sourceLanguage = sourceLanguage,
-                targetLanguage = targetLanguage,
-                timestamp = System.currentTimeMillis()
-            )
-            translationDao.insertTranslation(entity)
-            
-            Result.success(translatedText)
-        } catch (e: Exception) {
-            Result.failure(e)
-        }
+
+     return remoteDataSource.translate(sourceText,sourceLanguage,targetLanguage)
     }
 
     override fun getAllTranslations(): Flow<List<Translation>> {
