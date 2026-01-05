@@ -48,38 +48,29 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation("androidx.recyclerview:recyclerview:1.3.2")
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 
 
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
-    implementation ("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
+    implementation(libs.kotlinx.coroutines.core)
+    implementation(libs.kotlinx.coroutines.android)
+    implementation (libs.androidx.lifecycle.runtime.ktx)
     
-    // WorkManager
-    implementation("androidx.work:work-runtime-ktx:2.9.0")
 
+    // Retrofit
+    implementation (libs.retrofit)
+    implementation (libs.converter.gson)
 
-
-    // RxJava
-    implementation ("io.reactivex.rxjava3:rxjava:3.1.8")
-    implementation ("io.reactivex.rxjava3:rxandroid:3.0.2")
-
-    // Retrofit с поддержкой RxJava
-    implementation ("com.squareup.retrofit2:retrofit:2.9.0")
-    implementation ("com.squareup.retrofit2:converter-gson:2.9.0")
-    implementation ("com.squareup.retrofit2:adapter-rxjava3:2.9.0")
 
     // Для логирования запросов (опционально)
-    implementation ("com.squareup.okhttp3:logging-interceptor:4.12.0")
+    implementation (libs.logging.interceptor)
 
     // Room
-    val roomVersion = "2.6.1"
-    implementation("androidx.room:room-runtime:$roomVersion")
-    implementation("androidx.room:room-ktx:$roomVersion")
-    ksp("androidx.room:room-compiler:$roomVersion")
+
+    implementation(libs.androidx.room.runtime)
+    implementation(libs.androidx.room.ktx)
+    ksp(libs.androidx.room.compiler)
 
     // Compose BOM
     val composeBom = platform("androidx.compose:compose-bom:2024.02.00")
@@ -87,19 +78,19 @@ dependencies {
     androidTestImplementation(composeBom)
     
     // Compose dependencies
-    implementation("androidx.compose.ui:ui")
-    implementation("androidx.compose.ui:ui-graphics")
-    implementation("androidx.compose.ui:ui-tooling-preview")
-    implementation("androidx.compose.material3:material3")
-    implementation("androidx.compose.material:material:1.5.4") // For SwipeToDismiss
-    implementation("androidx.activity:activity-compose:1.8.2")
+    implementation(libs.androidx.ui)
+    implementation(libs.androidx.ui.graphics)
+    implementation(libs.androidx.ui.tooling.preview)
+    implementation(libs.androidx.material3)
+    implementation(libs.androidx.material) // For SwipeToDismiss
+    implementation(libs.androidx.activity.compose)
     
     // Navigation Compose
-    implementation("androidx.navigation:navigation-compose:2.7.6")
+    implementation(libs.androidx.navigation.compose)
     
     // ViewModel Compose
-    implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.7.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+    implementation(libs.lifecycle.runtime.compose)
 
 
     //Koin
@@ -109,16 +100,16 @@ dependencies {
 
 
     // Тестирование
-    testImplementation("junit:junit:4.13.2")
-    testImplementation("org.mockito:mockito-core:5.3.1")
-    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+
+    testImplementation(libs.mockito.core)
+    testImplementation(libs.mockito.kotlin)
+    testImplementation(libs.kotlinx.coroutines.test)
 
     // MockK
-    testImplementation("io.mockk:mockk:1.13.8")
+    testImplementation(libs.mockk)
     // Для тестирования ViewModel с LiveData/StateFlow
-    testImplementation("androidx.arch.core:core-testing:2.2.0")
+    testImplementation(libs.androidx.core.testing)
 
     // Если используете LiveData в тестах:
-    testImplementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
+    testImplementation(libs.androidx.lifecycle.livedata.ktx)
 }
