@@ -19,7 +19,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
 import com.example.core.R
-import com.example.core.ui.ViewModelFactory
 import com.example.core.data.Languages
 import org.koin.androidx.compose.koinViewModel
 
