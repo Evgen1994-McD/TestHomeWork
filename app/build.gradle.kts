@@ -114,6 +114,11 @@ dependencies {
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
 
-    // ИЛИ используйте MockK вместо Mockito
+    // MockK
     testImplementation("io.mockk:mockk:1.13.8")
+    // Для тестирования ViewModel с LiveData/StateFlow
+    testImplementation("androidx.arch.core:core-testing:2.2.0")
+
+    // Если используете LiveData в тестах:
+    testImplementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
 }
