@@ -1,6 +1,6 @@
 package com.example.core.data.dataSource
 
-import com.example.core.data.api.GoogleTranslateService
+import com.example.core.data.api.GoogleTranslateApi
 import com.example.core.data.database.TranslationDao
 import com.example.core.data.database.TranslationEntity
 import kotlinx.coroutines.delay
@@ -8,7 +8,7 @@ import kotlin.random.Random
 
 class RemoteDataSource(
     private val translationDao: TranslationDao,
-    private val api: com.example.core.data.api.GoogleTranslateApi = GoogleTranslateService.api
+    private val api: GoogleTranslateApi
 ):TranslateDataSource {
     override suspend fun translate(
         sourceText: String,

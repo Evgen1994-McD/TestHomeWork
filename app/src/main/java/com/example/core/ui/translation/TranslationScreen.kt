@@ -19,20 +19,14 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
 import com.example.core.R
-import com.example.core.di.AppModule
 import com.example.core.ui.ViewModelFactory
 import com.example.core.data.Languages
+import org.koin.androidx.compose.koinViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TranslationScreen(
-    viewModel: TranslationViewModel = viewModel(
-        factory = ViewModelFactory(
-            translateUseCase = AppModule.getTranslateUseCase(LocalContext.current),
-            getTranslationHistoryUseCase = AppModule.getTranslationHistoryUseCase(LocalContext.current),
-            deleteTranslationUseCase = AppModule.getDeleteTranslationUseCase(LocalContext.current)
-        )
-    )
+    viewModel: TranslationViewModel = koinViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsState()
 

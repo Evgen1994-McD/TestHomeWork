@@ -9,23 +9,7 @@ interface TranslationRepository {
         sourceLanguage: String,
         targetLanguage: String
     ): Result<String>
-    
-    fun getAllTranslations(): Flow<List<Translation>>
-    
-    suspend fun deleteTranslation(translation: Translation)
-    
-    fun getTranslationsFiltered(
-        sourceLang: String?,
-        targetLang: String?
-    ): Flow<List<Translation>>
-    
-    fun getAllTranslationsSorted(sortType: SortType): Flow<List<Translation>>
 }
+    
 
-enum class SortType {
-    DATE_DESC,
-    DATE_ASC,
-    TEXT_ASC,
-    TEXT_DESC
-}
 
