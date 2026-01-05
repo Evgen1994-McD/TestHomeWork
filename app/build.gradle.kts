@@ -105,4 +105,15 @@ dependencies {
     //Koin
     implementation(libs.koin)
     implementation(libs.koin.androidx.compose)
+
+
+
+    // Тестирование
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.mockito:mockito-core:5.3.1")
+    testImplementation("org.mockito.kotlin:mockito-kotlin:5.1.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.3")
+
+    // ИЛИ используйте MockK вместо Mockito
+    testImplementation("io.mockk:mockk:1.13.8")
 }

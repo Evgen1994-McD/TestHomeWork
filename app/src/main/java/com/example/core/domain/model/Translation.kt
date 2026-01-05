@@ -6,6 +6,6 @@ data class Translation(
     val translatedText: String,
     val sourceLanguage: String,
     val targetLanguage: String,
-    val timestamp: Long
+    val timestamp: Long = System.currentTimeMillis()
 )
 
