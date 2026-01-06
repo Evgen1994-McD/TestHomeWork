@@ -20,12 +20,12 @@ class GetTranslationHistoryUseCaseTest {
 
         val testList = listOf(
             Translation(
-                id = 1, // Добавьте ID если есть в модели
+                id = 1,
                 sourceText = "hi",
                 translatedText = "привет",
                 sourceLanguage = "en",
                 targetLanguage = "ru",
-                timestamp = 1000L // Добавьте timestamp для сортировки
+                timestamp = 1000L
             ),
             Translation(
                 id = 2,
