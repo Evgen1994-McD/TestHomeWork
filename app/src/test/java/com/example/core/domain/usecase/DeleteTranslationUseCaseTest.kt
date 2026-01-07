@@ -3,8 +3,8 @@ import com.example.core.domain.model.Translation
 import org.mockito.kotlin.*
 import com.example.core.domain.repository.HistoryRepository
 import kotlinx.coroutines.runBlocking
-import org.junit.Test
-import org.junit.Assert.assertEquals // Правильный импорт!
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 
 class DeleteTranslationUseCaseTest {
     private val historyRepository: HistoryRepository = mock()

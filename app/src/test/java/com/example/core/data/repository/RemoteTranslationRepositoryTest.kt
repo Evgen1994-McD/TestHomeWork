@@ -16,7 +16,7 @@ class RemoteTranslationRepositoryTest {
     private val dataSource: TranslateDataSource = mock()
     private val repo = RemoteTranslationRepository(dao, dataSource)
     @Test
-    fun `quick test - check cache then remote`() = runTest {
+    fun `check cache then remote`() = runTest {
         // Настраиваем
         val entity = TranslationEntity(
             sourceText = "Hi", translatedText = "Привет",

@@ -112,4 +112,8 @@ dependencies {
 
     // Если используете LiveData в тестах:
     testImplementation(libs.androidx.lifecycle.livedata.ktx)
+
+//Junit 5 для Assertions так как уже написал на 4
+    testImplementation ("org.junit.jupiter:junit-jupiter:5.10.0")
+    testRuntimeOnly ("org.junit.platform:junit-platform-launcher")
 }
