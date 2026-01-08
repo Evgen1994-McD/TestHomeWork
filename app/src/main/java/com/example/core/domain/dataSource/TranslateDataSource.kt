@@ -1,4 +1,4 @@
-package com.example.core.data.dataSource.interfaces
+package com.example.core.domain.dataSource
 
 interface TranslateDataSource {
     suspend fun translate(  sourceText: String,

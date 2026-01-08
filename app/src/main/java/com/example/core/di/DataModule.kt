@@ -6,8 +6,8 @@ import com.example.core.data.api.GoogleTranslateApi
 import com.example.core.data.api.GoogleTranslateService
 import com.example.core.data.dataSource.LocalDataSourceImpl
 import com.example.core.data.dataSource.RemoteDataSource
-import com.example.core.data.dataSource.interfaces.LocalDataSource
-import com.example.core.data.dataSource.interfaces.TranslateDataSource
+import com.example.core.domain.dataSource.LocalDataSource
+import com.example.core.domain.dataSource.TranslateDataSource
 import com.example.core.data.database.TranslationDao
 import com.example.core.data.database.TranslationDatabase
 import org.koin.android.ext.koin.androidContext

@@ -1,6 +1,6 @@
 package com.example.core.data.repository
 
-import com.example.core.data.dataSource.interfaces.LocalDataSource
+import com.example.core.domain.dataSource.LocalDataSource
 import com.example.core.domain.repository.LocalRepository
 
 class LocalRepositoryImpl(

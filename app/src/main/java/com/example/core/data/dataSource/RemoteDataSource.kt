@@ -1,7 +1,7 @@
 package com.example.core.data.dataSource
 
 import com.example.core.data.api.GoogleTranslateApi
-import com.example.core.data.dataSource.interfaces.TranslateDataSource
+import com.example.core.domain.dataSource.TranslateDataSource
 import com.example.core.data.database.TranslationDao
 import com.example.core.data.database.TranslationEntity
 import kotlinx.coroutines.delay

@@ -1,7 +1,6 @@
 package com.example.core.data.repository
 
 import com.example.core.data.dataSource.LocalDataSourceImpl
-import com.example.core.data.dataSource.interfaces.LocalDataSource
 import kotlinx.coroutines.test.runTest
 import org.junit.Test
 import org.junit.Assert.*

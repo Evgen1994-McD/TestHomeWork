@@ -1,7 +1,7 @@
 package com.example.core.data.dataSource
 
 import androidx.collection.LruCache
-import com.example.core.data.dataSource.interfaces.LocalDataSource
+import com.example.core.domain.dataSource.LocalDataSource
 import com.example.core.data.dto.TranslationDTO
 
 class LocalDataSourceImpl : LocalDataSource {

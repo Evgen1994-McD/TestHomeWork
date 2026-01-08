@@ -1,6 +1,6 @@
 package com.example.core.data.repository
 
-import com.example.core.data.dataSource.interfaces.TranslateDataSource
+import com.example.core.domain.dataSource.TranslateDataSource
 import com.example.core.data.database.TranslationDao
 import com.example.core.domain.repository.TranslationRepository as TranslationRepositoryDomain
 
